@@ -184,8 +184,9 @@ window.SAILOG_LIVE = (() => {
       if (d.sailogLive) onCustomer(d.sailogLive);
     });
     window.addEventListener('sailog:fundsent', (e) => onFund(e.detail || {}));
-    let saved = false; try { saved = localStorage.getItem(KEY) === '1'; } catch (e) {}
-    if (saved) set(true);
+    // 기본값 켜짐: 시연에서 고객 폰이 처음부터 보이게. PB가 직접 끈 경우('0')만 꺼진 채로 시작
+    let saved = true; try { saved = localStorage.getItem(KEY) !== '0'; } catch (e) {}
+    if (saved && window.innerWidth > 760) set(true);
   }
 
   return { init, onSend, onCall, set };

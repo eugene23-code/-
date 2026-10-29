@@ -138,7 +138,9 @@ window.SAILOG_CX = (() => {
     const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     // 사이드바 '고객 경험' 라벨 옆: 소개 페이지(고객 편 → PB 편)로 돌아가는 링크
     const grp = $('.nav-group');
-    if (grp && !$('.nav-intro', grp)) grp.insertAdjacentHTML('beforeend', ' <a class="nav-intro" href="landing.html" style="float:right;font-weight:600;color:var(--fg3)">소개 보기</a>');
+    // 소개는 워크스페이스 상단 '서비스 소개' 탭(#view-intro)에서 열린다
+    if (grp && !$('.nav-intro', grp)) grp.insertAdjacentHTML('beforeend', ' <a class="nav-intro" href="#" style="float:right;font-weight:600;color:var(--fg3)">소개 보기</a>');
+    const ni = $('.nav-intro'); if (ni) ni.onclick = (e) => { e.preventDefault(); if (show) show('intro'); };
     document.addEventListener('click', (e) => {
       const b = e.target.closest('[data-cx],[data-cx-tpl],[data-cx-ev],[data-cx-live]'); if (!b) return;
       if (b.hasAttribute('data-cx-live')) { if (window.SAILOG_LIVE) SAILOG_LIVE.set(true); return; }

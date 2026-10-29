@@ -4,16 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사이로그 PB</title>
-<script>
-/* 배포(웹) 진입 순서: 랜딩(고객 편) → PB 편 → '서비스 이용하기'(app.html) → 이 워크스페이스.
-   웹 주소로 처음 들어오면 랜딩으로 보낸다. app.html 을 거쳤거나(세션 표시), 딥링크(#...)이거나,
-   로컬 파일·단일 파일 빌드(http/https 아님)면 그대로 워크스페이스를 연다. */
-(function () {
-  if (!/^https?:$/.test(location.protocol) || location.hash) return;
-  try { if (sessionStorage.getItem('sailog.entered')) return; } catch (e) { return; }
-  location.replace('landing.html');
-})();
-</script>
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="stylesheet" href="fonts.css"> <!-- Pretendard: 프로젝트 내 글꼴 파일 (fonts/) -->
 <link rel="stylesheet" href="styles.css">
@@ -50,6 +40,15 @@
 .topbar .date { color: var(--fg3); font-size: 13px; white-space: nowrap; }
 @media (max-width: 1100px) { .topbar { flex-wrap: wrap; row-gap: 8px; } .topbar .search { width: 180px; } }
 .topbar .spacer { flex: 1; }
+/* 상단 '서비스 소개' 탭 + 소개 화면 */
+.top-tab { height: 36px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--fg2); background: var(--surface); border: 1px solid var(--line); white-space: nowrap; }
+.top-tab:hover { color: var(--fg); }
+.top-tab.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.intro-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.intro-seg { display: flex; gap: 4px; background: var(--surface); padding: 4px; border-radius: 12px; box-shadow: var(--shadow); }
+.intro-seg button { height: 34px; padding: 0 16px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--fg3); }
+.intro-seg button.on { background: var(--brand); color: #fff; }
+.intro-frame { display: block; width: 100%; border: 0; border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow); height: max(640px, calc(100vh - 150px)); }
 .search { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; background: var(--surface); border-radius: 10px; border: 1px solid var(--line); width: 220px; }
 .search input { border: 0; outline: 0; background: none; width: 100%; font-size: 13px; }
 .content { padding: 8px 28px 60px; max-width: 980px; width: 100%; }
@@ -549,6 +548,7 @@ td.r, th.r { text-align: right; }
       <h2 id="view-title">오늘 할 일</h2>
       <span class="date" id="today-label"></span>
       <span class="spacer"></span>
+      <button type="button" class="top-tab" id="tab-intro" data-intro>서비스 소개</button>
       <label class="search"><span>⌕</span><input id="q" type="search" placeholder="고객 이름 검색" autocomplete="off"></label>
       <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
     </header>
@@ -632,6 +632,13 @@ td.r, th.r { text-align: right; }
 
       <!-- 고객 화면 : 고객이 받는 알림톡 이후 흐름 · 서비스 소개 (cx.js) -->
       <section id="view-cx" hidden></section>
+
+      <!-- 서비스 소개: 상단 '서비스 소개' 탭. 고객 편(landing.html) · PB 편(pb.html)을 ?embed 로 띄움 -->
+      <section id="view-intro" hidden>
+        <div class="intro-head"><div class="intro-seg" role="group" aria-label="소개 페이지"><button type="button" class="on" data-intro-page="landing.html">고객 편</button><button type="button" data-intro-page="pb.html">PB 편</button></div>
+          <span class="muted" style="font-size:13px">사이로그가 고객과 PB의 일을 어떻게 바꾸는지 소개해요.</span></div>
+        <iframe class="intro-frame" id="intro-frame" title="서비스 소개 (시연용 가상)"></iframe>
+      </section>
     </div>
   </div>
 </div>
@@ -688,13 +695,23 @@ td.r, th.r { text-align: right; }
   $('#today-label').textContent = TODAY.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
 
   /* ---------- 내비 ---------- */
-  const TITLES = { todo: '오늘 할 일', customers: '고객', send: '알림톡', calendar: '일정', insight: '인사이트', detail: '고객 상세', cx: '고객 화면' };
+  const TITLES = { todo: '오늘 할 일', customers: '고객', send: '알림톡', calendar: '일정', insight: '인사이트', detail: '고객 상세', cx: '고객 화면', intro: '서비스 소개' };
+  /* 서비스 소개 탭: 처음 열 때 고객 편을 띄우고, 고객 편 / PB 편 전환 */
+  function introPage(src) {
+    const f = $('#intro-frame'), url = src + '?embed';
+    document.querySelectorAll('[data-intro-page]').forEach(b => b.classList.toggle('on', b.dataset.introPage === src));
+    if (window.SAILOG_SETFRAME) SAILOG_SETFRAME(f, url); else if (f.getAttribute('src') !== url) f.setAttribute('src', url);
+  }
+  document.querySelectorAll('[data-intro-page]').forEach(b => b.onclick = () => introPage(b.dataset.introPage));
+  $('#tab-intro').onclick = () => show('intro');
   function show(view) {
     if (view !== 'detail') state.prev = view;
     state.view = view;
     document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === (view === 'detail' ? 'customers' : view)));
-    ['todo', 'customers', 'send', 'calendar', 'insight', 'detail', 'cx'].forEach(v => { $('#view-' + v).hidden = v !== view; });
+    ['todo', 'customers', 'send', 'calendar', 'insight', 'detail', 'cx', 'intro'].forEach(v => { $('#view-' + v).hidden = v !== view; });
     $('#view-title').textContent = TITLES[view];
+    $('#tab-intro').classList.toggle('on', view === 'intro');
+    if (view === 'intro' && !$('#intro-frame').getAttribute('src') && !$('#intro-frame').srcdoc) introPage('landing.html');
     if (view === 'customers') renderCustomers();
     if (view === 'send') renderSend();
     if (view === 'calendar') CAL.render();

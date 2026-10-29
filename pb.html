@@ -525,7 +525,6 @@ td.a { font-weight: 700; }
       <div class="lk"><div class="pb"><div class="who">PB</div><p>통화를 마치면 요약과 일정이 자동 등록</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>상담 전날 알림을 받고, 같은 설명을 다시 안 해요</p></div></div>
       <div class="lk"><div class="pb"><div class="who">PB</div><p>근거가 붙은 상품 후보를 검토</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>왜 나에게 맞는지부터 설명을 들어요</p></div></div>
     </div>
-    <div style="text-align:center"><a class="go-cust" href="landing.html">고객 편에서 보기 →</a></div>
   </div>
 </section>
 
@@ -557,10 +556,6 @@ td.a { font-weight: 700; }
   <div class="wrap">
     <h2>찾는 일은 사이로그가,<br><em>만나는 일은 PB가.</em></h2>
     <p>유진투자증권 PB와 고객을 잇는 계좌 로그 서비스</p>
-    <div class="start">
-      <a class="start-btn" href="app.html">서비스 이용하기 →</a>
-      <a class="start-sub" href="landing.html">고객 편 다시 보기</a>
-    </div>
   </div>
 </section>
 
@@ -570,6 +565,13 @@ td.a { font-weight: 700; }
   </div>
 </footer>
 
+<style>
+/* PB 워크스페이스의 '서비스 소개' 탭 안에 ?embed 로 들어왔을 때: 상단 바는 바깥 화면과 겹치므로 숨김 */
+.embed .top, .embed body::before { display: none; }
+</style>
+<script>
+(() => { if (new URLSearchParams(window.__SAILOG_QS || location.search).has('embed') && window.parent !== window) document.documentElement.classList.add('embed'); })();
+</script>
 <script>
 /* 다른 페이지(고객 편)에서 넘어오면 이전 스크롤 위치가 이어지지 않고 맨 위에서 시작 (#섹션 바로가기는 예외) */
 (() => {
