@@ -28,6 +28,10 @@ window.SAILOG_LIVE = (() => {
   @media (max-width: 1100px) { body.live .app { padding-right: 0; } .lv { box-shadow: -10px 0 30px rgba(25,31,40,.15); } }
   .lv-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 8px; }
   .lv-head b { font-size: 14px; }
+  /* PB 화면 ↔ 고객 화면 경계: 진한 세로선 + 다른 바탕 + '고객이 보는 화면' 라벨 */
+  .lv { border-left: 3px solid var(--fg); background: #E4E9F0; }
+  .lv-side { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 99px; background: var(--fg); color: var(--surface); font-size: 13px; font-weight: 800; white-space: nowrap; }
+  .lv-head .lv-who { margin-left: 2px; }
   .lv-who { font-size: 12px; font-weight: 700; color: var(--fg3); background: var(--gray-tint); border-radius: 99px; padding: 3px 10px; }
   .lv-who.on { color: var(--brand); background: var(--brand-tint); }
   .lv-x { margin-left: auto; width: 28px; height: 28px; border-radius: 8px; font-size: 18px; color: var(--fg3); }
@@ -67,7 +71,7 @@ window.SAILOG_LIVE = (() => {
 
   function build() {
     document.body.insertAdjacentHTML('beforeend', `<aside class="lv" id="lv" hidden aria-label="고객 폰 (시연용 가상)">
-      <div class="lv-head"><b>고객 폰 <small style="font-weight:600;color:var(--fg3);font-size:11.5px">· 고객이 보는 화면</small></b><span class="lv-who" id="lv-who">대기 중</span><button type="button" class="lv-x" id="lv-x" aria-label="시연 모드 끄기">×</button></div>
+      <div class="lv-head"><span class="lv-side"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>고객이 보는 화면</span><span class="lv-who" id="lv-who">대기 중</span><button type="button" class="lv-x" id="lv-x" aria-label="시연 모드 끄기">×</button></div>
       <iframe class="lv-frame" title="고객 폰 (시연용 가상)"></iframe>
       <div class="lv-log"><div class="lv-log-h"><span>PB ↔ 고객 연결 기록</span><span>시연용</span></div>
         <ol id="lv-log"><li class="empty">알림톡 화면에서 고객을 골라 발송해 보세요. 고객 폰에 바로 도착해요.</li></ol></div>

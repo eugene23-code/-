@@ -562,7 +562,7 @@ body.live.dw .drawer { right: 0; }
       <span class="spacer"></span>
       <button type="button" class="top-tab" id="tab-intro" data-intro>서비스 소개</button>
       <label class="search"><span>⌕</span><input id="q" type="search" placeholder="고객 이름 검색" autocomplete="off"></label>
-      <span class="staff-badge" title="이 화면은 PB(직원)만 사용합니다. 고객에게는 알림톡과 고객 폰 화면만 보입니다."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>직원 전용 · PB 업무 화면</span>
+      <span class="staff-badge" title="이 화면은 PB(직원)만 사용합니다. 고객에게는 알림톡과 고객 폰 화면만 보입니다."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>직원 전용 · PB가 보는 화면</span>
       <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
     </header>
 
@@ -698,7 +698,13 @@ body.live.dw .drawer { right: 0; }
 
   /* ---------- 상태 ---------- */
   const state = { view: 'todo', filter: 'all', done: new Set(), selected: null, sent: [], recip: new Set(), tpl: 'cma', talk: new Set() };
-  try { const d = JSON.parse(localStorage.getItem('sailog.done') || '[]'); d.forEach(x => state.done.add(x)); } catch (e) {}
+  try {
+    const raw = localStorage.getItem('sailog.done');
+    // 시연용: 처음 여는 화면에서 진행 게이지가 보이도록 우선순위 낮은 할 일 2개는 완료된 상태로 시작
+    const d = raw == null ? TODOS.slice(-2).map(t => t.id) : JSON.parse(raw);
+    d.forEach(x => state.done.add(x));
+    if (raw == null) localStorage.setItem('sailog.done', JSON.stringify(d));
+  } catch (e) {}
   const persist = () => { try { localStorage.setItem('sailog.done', JSON.stringify([...state.done])); } catch (e) {} };
 
   const PRI = { 3: '긴급', 2: '높음', 1: '보통' };
