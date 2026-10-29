@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="사이로그">
-  <!-- 사이로그 마크: PB(왼쪽 점)와 고객(오른쪽 링) '사이'를 계좌 '로그' 꺾은선이 잇는다. 유진 레드 #D8201F -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="귀띔">
+  <!-- 귀띔 마크: 웃는 말풍선(반가운 알림)과 새 알림 점. 유진 레드 #D8201F -->
   <rect width="32" height="32" rx="9" fill="#D8201F"/>
-  <path d="M8.6 21.6 L13.4 16.4 L17.6 19.4 L23.2 11.2" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="8.6" cy="21.6" r="3.3" fill="#fff"/>
-  <circle cx="23.2" cy="11.2" r="3.6" fill="#fff"/>
-  <circle cx="23.2" cy="11.2" r="1.5" fill="#D8201F"/>
+  <path d="M15 8.4c-4.9 0-8.6 3.1-8.6 7.2 0 2.4 1.3 4.5 3.4 5.8l-.8 3.5 3.9-2.2c.7.1 1.4.2 2.1.2 4.9 0 8.6-3.1 8.6-7.2S19.9 8.4 15 8.4z" fill="#fff"/>
+  <path d="M11.4 15.4c1.2 1.6 2.4 2.3 3.6 2.3s2.4-.7 3.6-2.3" fill="none" stroke="#D8201F" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="23.6" cy="9" r="4" fill="#D8201F"/>
+  <circle cx="23.6" cy="9" r="2.6" fill="#FFD43B"/>
 </svg>

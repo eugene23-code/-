@@ -1,18 +1,18 @@
 /* ============================================================
-   사이로그 — 고객 경험 탭 (#view=cx)
+   귀띔 — 고객 경험 탭 (#view=cx)
    PB 워크스페이스 안에서 고객이 보는 화면(customer.html)과 서비스 소개(landing.html)를 띄운다.
    사용: index.html 에 nav 버튼(data-view="cx") + <section id="view-cx"> + show() 훅,
          CAL.init 뒤에 SAILOG_CX.init({ show }).
-   진입 버튼 3곳(알림톡 미리보기 · 일정 사이드 · AI 펀드 매칭)은 MutationObserver 로 붙여서
+   진입 버튼 3곳(귀띔 미리보기 · 일정 사이드 · AI 펀드 매칭)은 MutationObserver 로 붙여서
    index.html 의 렌더 코드는 건드리지 않는다.
-   2단계: 알림톡 화면에서 고른 고객·템플릿, 일정의 통화 약속(실시간 통화로 새로 잡힌 약속 포함)을 페르소나로 만들어
+   2단계: 귀띔 화면에서 고른 고객·템플릿, 일정의 통화 약속(실시간 통화로 새로 잡힌 약속 포함)을 페르소나로 만들어
          postMessage { sailogPersona, flow } 로 customer.html 에 넘긴다. 페르소나가 없으면 이도윤 님 기본 시나리오.
    ============================================================ */
 window.SAILOG_CX = (() => {
   const TABS = [
-    { id: 'cma', name: '예수금 → CMA', src: 'customer.html?embed#cma', note: '알림톡을 받은 고객이 예수금을 확인하고 CMA로 옮기기까지' },
-    { id: 'call', name: '상담 전날 알림', src: 'customer.html?embed#call', note: '통화에서 잡힌 약속이 전날 고객에게 알림톡으로 가고, 고객이 시간을 정하기까지' },
-    { id: 'info', name: '안내 알림톡', src: 'customer.html?embed#info', note: '알림톡의 숫자를 확인하고 PB 상담을 예약하기까지', personaOnly: true },
+    { id: 'cma', name: '예수금 → CMA', src: 'customer.html?embed#cma', note: '귀띔을 받은 고객이 예수금을 확인하고 CMA로 옮기기까지' },
+    { id: 'call', name: '상담 전날 알림', src: 'customer.html?embed#call', note: '통화에서 잡힌 약속이 전날 고객에게 귀띔으로 가고, 고객이 시간을 정하기까지' },
+    { id: 'info', name: '안내 귀띔', src: 'customer.html?embed#info', note: '귀띔의 숫자를 확인하고 PB 상담을 예약하기까지', personaOnly: true },
     // '서비스 소개'(landing.html)는 플랫폼에 들어오기 전에 반드시 거치므로 탭에서 뺌. 사이드바 '소개 보기'로만 다시 볼 수 있음
   ];
   const DEFAULT_CUST = 125; // 이도윤 (customer.html 기본 시나리오)
@@ -51,7 +51,7 @@ window.SAILOG_CX = (() => {
   const srcOf = (t) => t.src + (t.id === 'intro' && anchor ? '#' + anchor : '');
 
   /* ---------- 페르소나 만들기 ---------- */
-  // 알림톡 템플릿 + 고객 → CMA·입금은 CMA 옮기기 흐름, 나머지는 '안내 → 상담 예약' 흐름
+  // 귀띔 템플릿 + 고객 → CMA·입금은 CMA 옮기기 흐름, 나머지는 '안내 → 상담 예약' 흐름
   function fromTemplate(c, k) {
     const T = SAILOG.TEMPLATES[k], m = T.build(c);
     const base = { custId: c.id, name: c.name, tpl: k, tplName: T.name, label: T.name,
@@ -116,7 +116,7 @@ window.SAILOG_CX = (() => {
     if (card && sig === calSig) return;
     calSig = sig; evMap = {}; evs.forEach(e => { evMap[e.id] = e; });
     const when = (e) => { const [, m, d] = e.date.split('-'); return `${+m}/${+d} ${e.time}`; };
-    const html = `<b>고객에게도 전날 알림이 가요</b><span>통화에서 잡힌 약속은 하루 전에 고객에게 알림톡으로 일정과 이야기할 내용을 보내요. 약속을 누르면 그 고객의 폰 화면이 열려요.</span>
+    const html = `<b>고객에게도 전날 알림이 가요</b><span>통화에서 잡힌 약속은 하루 전에 고객에게 귀띔으로 일정과 이야기할 내용을 보내요. 약속을 누르면 그 고객의 폰 화면이 열려요.</span>
       <div class="cx-evs">${evs.map(e => `<button type="button" class="cx-ev" data-cx-ev="${esc(e.id)}"><time>${when(e)}</time><span><b>${esc(e.title.split(' · ')[0])}</b>${esc(e.title.replace(/^.*? · /, ''))}</span></button>`).join('') || '<span>다가오는 통화 약속이 없어요.</span>'}</div>`;
     if (!card) side.insertAdjacentHTML('beforeend', `<div class="dt-card cx-entry card">${html}</div>`);
     else card.innerHTML = html;
@@ -124,7 +124,7 @@ window.SAILOG_CX = (() => {
   function decorate() {
     const pv = $('#send-preview');
     if (pv && pv.children.length && !$('.cx-entry', pv)) {
-      pv.insertAdjacentHTML('beforeend', `<div class="cx-entry"><span><b>고객은 이 알림톡을 받고 어떻게 움직일까요?</b><br>선택한 고객의 이름과 금액 그대로 보여드려요.</span><button type="button" class="btn sm" data-cx-tpl>이 고객의 폰에서 보기 →</button></div>`);
+      pv.insertAdjacentHTML('beforeend', `<div class="cx-entry"><span><b>고객은 이 귀띔을 받고 어떻게 움직일까요?</b><br>선택한 고객의 이름과 금액 그대로 보여드려요.</span><button type="button" class="btn sm" data-cx-tpl>이 고객의 폰에서 보기 →</button></div>`);
     }
     document.querySelectorAll('#view-detail .fd-note').forEach(n => {
       if (n.nextElementSibling && n.nextElementSibling.classList.contains('cx-entry')) return;

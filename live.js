@@ -1,7 +1,7 @@
 /* ============================================================
-   사이로그 — 시연 모드 (PB 작업 ↔ 고객 폰 실시간 연결)
+   귀띔 — 시연 모드 (PB 작업 ↔ 고객 폰 실시간 연결)
    사이드바 '시연 모드'를 켜면 오른쪽에 고객 폰(customer.html?embed&mini)과 연결 기록이 붙는다.
-   1차 흐름: PB 알림톡 발송 → 고객 폰 도착 → 고객이 CMA로 옮김 → PB 오늘 할 일 완료 + 알림.
+   1차 흐름: PB 귀띔 발송 → 고객 폰 도착 → 고객이 CMA로 옮김 → PB 오늘 할 일 완료 + 알림.
    펀드 안내: fund.js 의 sailog:fundsent 이벤트 → 고객 폰에 (광고) 펀드 정보 메시지 → 고객이 PB 상담 예약 → 일정 반영.
    사용: index.html send() 안에 SAILOG_LIVE.onSend(ids, tpl) 한 줄,
          SAILOG_CX.init 뒤에 SAILOG_LIVE.init({ markDone, undo, isOpen, toast }).
@@ -59,7 +59,7 @@ window.SAILOG_LIVE = (() => {
   function log(who, text) {
     const ol = $('#lv-log'); if (!ol) return;
     const e = $('.empty', ol); if (e) e.remove();
-    const label = { pb: 'PB', cu: '고객', sys: '사이로그' }[who];
+    const label = { pb: 'PB', cu: '고객', sys: '귀띔' }[who];
     ol.insertAdjacentHTML('afterbegin', `<li><time>${now()}</time><span class="w ${who}">${label}</span><span>${text}</span></li>`);
   }
   function who(text) { const w = $('#lv-who'); if (w) { w.textContent = text; w.classList.add('on'); } }
@@ -74,7 +74,7 @@ window.SAILOG_LIVE = (() => {
       <div class="lv-head"><span class="lv-side"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>고객이 보는 화면</span><span class="lv-who" id="lv-who">대기 중</span><button type="button" class="lv-x" id="lv-x" aria-label="시연 모드 끄기">×</button></div>
       <iframe class="lv-frame" title="고객 폰 (시연용 가상)"></iframe>
       <div class="lv-log"><div class="lv-log-h"><span>PB ↔ 고객 연결 기록</span><span>시연용</span></div>
-        <ol id="lv-log"><li class="empty">알림톡 화면에서 고객을 골라 발송해 보세요. 고객 폰에 바로 도착해요.</li></ol></div>
+        <ol id="lv-log"><li class="empty">귀띔 화면에서 고객을 골라 발송해 보세요. 고객 폰에 바로 도착해요.</li></ol></div>
     </aside>`);
     frame = $('#lv .lv-frame');
     $('#lv-x').onclick = () => set(false);
@@ -91,22 +91,22 @@ window.SAILOG_LIVE = (() => {
     }
   }
 
-  /* PB → 고객: 알림톡 발송 (index.html send) */
+  /* PB → 고객: 귀띔 발송 (index.html send) */
   function onSend(ids, tpl) {
     if (!on || !ids.length || !window.SAILOG_CX) return;
     const c = SAILOG.byId(ids[0]); if (!c) return;
     const p = SAILOG_CX.fromTemplate(c, tpl);
-    log('pb', `<b>${esc(c.name)}</b> 님에게 '${esc(p.tplName)}' 알림톡 발송${ids.length > 1 ? ` <small>외 ${ids.length - 1}명</small>` : ''}`);
+    log('pb', `<b>${esc(c.name)}</b> 님에게 '${esc(p.tplName)}' 귀띔 발송${ids.length > 1 ? ` <small>외 ${ids.length - 1}명</small>` : ''}`);
     log('sys', `${esc(c.name)} 님 계좌 숫자로 채워서 카카오톡 전달`);
     who(`${c.name} 님`);
-    lastKind = '알림톡';
+    lastKind = '귀띔';
     pending = { sailogPersona: p, flow: p.flow, live: true };
     post();
   }
 
   /* PB → 고객: AI 펀드 매칭의 '카카오 메시지로 안내' (fund.js 가 보내는 sailog:fundsent 이벤트)
      문구는 fund.js fundMsg 와 같은 구성: (광고) 표기 · 개요 · PB 한마디 · 필수 고지 · 권유 버튼 없음 */
-  let lastKind = '알림톡';
+  let lastKind = '귀띔';
   function onFund(det) {
     if (!on || !window.SAILOG_FUND) return;
     const c = SAILOG.byId(det.id), f = SAILOG_FUND.byId(det.fid); if (!c || !f) return;
@@ -144,10 +144,10 @@ window.SAILOG_LIVE = (() => {
       log('sys', `PB 일정에 '고객 확정' ${d.visit ? '방문' : '전화'} 상담으로 등록`);   // 알림은 calendar.js(storage 이벤트)가 띄움 — 겹치지 않게 여기선 기록만
     }
     if (d.type === 'ask') {
-      log('cu', `<b>${name}</b> 님이 ${esc(d.from || '알림톡')}에서 PB 상담을 요청했어요`);
+      log('cu', `<b>${name}</b> 님이 ${esc(d.from || '귀띔')}에서 PB 상담을 요청했어요`);
       const t = new Date(), hm = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
       SAILOG.CALLS.addManual({ date: SAILOG.CALLS.TODAY_ISO, time: hm, kind: 'callback', custId: d.custId,
-        title: `${d.name} · 고객 상담 요청`, note: `고객이 ${d.from || '알림톡'}에서 상담을 요청 · 오늘 중 연락` });
+        title: `${d.name} · 고객 상담 요청`, note: `고객이 ${d.from || '귀띔'}에서 상담을 요청 · 오늘 중 연락` });
       if (H.refreshCal) H.refreshCal();
       log('sys', 'PB 오늘 일정에 \'고객 상담 요청\' 연락으로 등록');
       H.toast(`${d.name} 님이 상담을 요청했어요 · 오늘 일정에 등록`, H.call ? '전화하기' : undefined, H.call ? () => H.call(d.custId) : undefined);

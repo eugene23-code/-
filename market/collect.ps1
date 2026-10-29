@@ -1,4 +1,4 @@
-# 사이로그 시장 데이터 수집 실행 스크립트 (Windows)
+# 귀띔 시장 데이터 수집 실행 스크립트 (Windows)
 # PATH 의 python 이 Microsoft Store 스텁일 수 있어 venv 의 python 을 직접 사용한다.
 #   .\collect.ps1                → 1회 수집
 #   .\collect.ps1 --watch 60     → 60초마다 갱신

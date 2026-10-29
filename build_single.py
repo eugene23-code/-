@@ -1,7 +1,7 @@
-"""사이로그 한 파일 버전 만들기 — dist/사이로그.html
+"""귀띔 한 파일 버전 만들기 — dist/귀띔.html
 
 원본(landing · pb · customer · index + js/css/logo)은 그대로 두고, 전부를 HTML 한 파일에 담는다.
-  - 바깥 셸 하나가 전체 화면 iframe 에 지금 페이지를 srcdoc 으로 띄운다 (주소: 사이로그.html#pb, #app/view=cx …)
+  - 바깥 셸 하나가 전체 화면 iframe 에 지금 페이지를 srcdoc 으로 띄운다 (주소: 귀띔.html#pb, #app/view=cx …)
   - 페이지 안의 landing/pb/app/index/customer.html 링크는 셸 안 이동으로 바뀐다 (뒤로 가기 됨)
   - 고객 화면 탭 · 시연 모드 폰 같은 안쪽 iframe 은 window.SAILOG_SETFRAME 으로 내장 페이지를 띄운다 (cx.js · live.js)
   - ?embed&mini 같은 주소 옵션은 window.__SAILOG_QS, #cma · #view=cx 같은 처음 해시는 window.__SAILOG_HASH 로 넘긴다
@@ -16,7 +16,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
-OUT = ROOT / 'dist' / '사이로그.html'
+OUT = ROOT / 'dist' / '귀띔.html'
 
 
 def read(name):
@@ -65,7 +65,7 @@ SHELL = r'''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>사이로그</title>
+<title>귀띔</title>
 <link rel="icon" type="image/svg+xml" href="__LOGO__">
 <style>
 html, body { margin: 0; height: 100%; background: #fff; }
@@ -73,8 +73,8 @@ html, body { margin: 0; height: 100%; background: #fff; }
 </style>
 </head>
 <body>
-<!-- 사이로그 한 파일 버전 (시연용 가상 화면). build_single.py 가 원본 폴더에서 만든 파일입니다. -->
-<iframe id="page" title="사이로그"></iframe>
+<!-- 귀띔 한 파일 버전 (시연용 가상 화면). build_single.py 가 원본 폴더에서 만든 파일입니다. -->
+<iframe id="page" title="귀띔"></iframe>
 <script type="application/json" id="sailog-pages">__DATA__</script>
 <script type="text/plain" id="sailog-font">__FONT__</script>
 <script>

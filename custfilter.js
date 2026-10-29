@@ -1,5 +1,5 @@
-/* 고객 목록 필터 — 빠른 보기 칩 + 기능별 상세 필터(그룹 안 OR, 그룹끼리 AND) + 결과 고객 일괄 알림톡.
-   신호(data.js) · 알림톡 이력 · 통화/일정(calls.js) · 펀드 매칭(fund.js) 을 읽어 고객을 나눈다.
+/* 고객 목록 필터 — 빠른 보기 칩 + 기능별 상세 필터(그룹 안 OR, 그룹끼리 AND) + 결과 고객 일괄 귀띔.
+   신호(data.js) · 귀띔 이력 · 통화/일정(calls.js) · 펀드 매칭(fund.js) 을 읽어 고객을 나눈다.
    index.html renderCustomers 가 SAILOG_CF.match(c) 로 거르고 SAILOG_CF.render(rows) 로 칩 숫자·일괄 발송 바를 갱신. */
 window.SAILOG_CF = (() => {
   const { CUSTOMERS, TEMPLATES, dayDiff } = SAILOG;
@@ -20,7 +20,7 @@ window.SAILOG_CF = (() => {
   const QUICK = [
     ['all', '전체', () => true],
     ['urgent', '긴급', c => c.pri === 3 && !hooks.done().has(c.id)],
-    ['send', '알림톡 보낼 수 있음', c => c.signals.some(s => s.template && !sentTpl(c).some(x => x.tpl === s.template))],
+    ['send', '귀띔 보낼 수 있음', c => c.signals.some(s => s.template && !sentTpl(c).some(x => x.tpl === s.template))],
     ['tax', '절세 기회', c => c.signals.some(s => s.cat === '절세')],
     ['cash', '자금 이동', c => has(c, 'CMA', 'MATURITY', 'LARGE_IN', 'LARGE_OUT')],
     ['risk', '위험 관리', c => has(c, 'MARGIN', 'RECEIVABLE', 'DROP', 'SURGE')],
@@ -44,8 +44,8 @@ window.SAILOG_CF = (() => {
     { id: 'risk', label: '위험 관리', opts: [
       ['MARGIN', '담보비율 주의', c => has(c, 'MARGIN')], ['RECEIVABLE', '미수 발생', c => has(c, 'RECEIVABLE')],
       ['DROP', '보유종목 급락', c => has(c, 'DROP')], ['SURGE', '보유종목 급등', c => has(c, 'SURGE')]] },
-    { id: 'tpl', label: '알림톡 대상', opts: tplOpts },
-    { id: 'msg', label: '알림톡 이력', opts: [
+    { id: 'tpl', label: '귀띔 대상', opts: tplOpts },
+    { id: 'msg', label: '귀띔 이력', opts: [
       ['sentToday', '오늘 발송함', c => sentTpl(c).length > 0],
       ['unread', '미확인 메시지 있음', c => c.history.some(h => h.status === '미확인')],
       ['noMsg30', '30일간 발송 없음', c => !sentTpl(c).length && !c.history.some(h => -dayDiff(h.date) <= 30)]] },
@@ -145,7 +145,7 @@ window.SAILOG_CF = (() => {
     renderBulk(rows);
   }
 
-  // 결과 고객 중 같은 알림톡 신호가 있는 사람을 모아 발송 화면으로 넘김 (선택한 '알림톡 대상' 템플릿 우선)
+  // 결과 고객 중 같은 귀띔 신호가 있는 사람을 모아 발송 화면으로 넘김 (선택한 '귀띔 대상' 템플릿 우선)
   function renderBulk(rows) {
     const box = $('#cf-bulk');
     const filtered = st.quick !== 'all' || st.sel.size;
@@ -158,7 +158,7 @@ window.SAILOG_CF = (() => {
     box.hidden = false;
     box.innerHTML = `<span>이 목록 중 <b>${cnt[cur]}명</b>에게</span>
       <select>${tpls.map(t => `<option value="${t}" ${t === cur ? 'selected' : ''}>${esc(TEMPLATES[t].name)} (${cnt[t]}명)</option>`).join('')}</select>
-      <span class="muted">알림톡을 보낼 수 있어요</span>
+      <span class="muted">귀띔을 보낼 수 있어요</span>
       <button class="btn primary sm">발송 화면으로</button>`;
     box.querySelector('select').onchange = (e) => { box.dataset.tpl = e.target.value; renderBulk(rows); };
     box.querySelector('.btn').onclick = () => hooks.sendBulk(rows.filter(c => c.signals.some(s => s.template === cur)).map(c => c.id), cur);

@@ -1,5 +1,5 @@
 /* ============================================================
-   사이로그 (SaiLog) 데이터 — 시연용
+   귀띔 데이터 — 시연용
    - 고객: 가상 인물 32명 (실제 고객과 무관) · 31~32번은 대주주 양도세 사례
    - 종목: 실제 종목명 사용. 시세·등락률·환율은 market.js(실제 시장 데이터)가
      먼저 로드되어 있으면 자동 교체되고, 없으면 아래 임시값을 사용합니다.
@@ -235,7 +235,7 @@ const SAILOG = (() => {
   const CAT = { DROP: '시장변동', SURGE: '시장변동', CONC: '시장변동', TAX: '절세', ISA_OPEN: '절세', ISA_MATURITY: '절세', ISA_LIMIT: '절세', PENSION: '절세', CMA: '자금', LARGE_IN: '자금', LARGE_OUT: '자금', MATURITY: '자금', DORMANT: '관계', ONBOARD: '관계', BIRTHDAY: '관계', MARGIN: '자금', RECEIVABLE: '자금', MAJOR: '절세' };
   const LABEL = { DROP: '급락', SURGE: '급등', CONC: '종목 편중', TAX: '해외 양도세', ISA_OPEN: 'ISA 미보유', ISA_MATURITY: 'ISA 만기', ISA_LIMIT: 'ISA 납입한도', PENSION: '연금 세액공제', CMA: '예수금 미운용', LARGE_IN: '대규모 입금', LARGE_OUT: '대규모 출금', MATURITY: '만기 도래', DORMANT: '장기 미거래', ONBOARD: '신규 고객', BIRTHDAY: '생일', MARGIN: '담보비율 주의', RECEIVABLE: '미수 발생', MAJOR: '대주주 양도세' };
 
-  /* ---------- 절세 계산 (계좌별 구체 금액 · 알림톡/신호 공용) ---------- */
+  /* ---------- 절세 계산 (계좌별 구체 금액 · 귀띔/신호 공용) ---------- */
   // 연금저축: 총급여 5,500만원 이하 16.5% / 초과 13.2%. bracket 미상이면 13.2%(보수적)
   function pensionCalc(e) {
     const P = TAX.pension; const rate = e.bracket === 'under' ? P.rateLow : P.rateHigh;
@@ -439,7 +439,7 @@ const SAILOG = (() => {
     return pts.reverse();
   }
 
-  /* ---------- 알림톡 발송 이력 (가상) ---------- */
+  /* ---------- 귀띔 발송 이력 (가상) ---------- */
   function buildHistory(c) {
     const r = rng(c.id * 104729);
     const H = [];
@@ -573,7 +573,7 @@ const SAILOG = (() => {
       cats: [...new Set(c.signals.map(s => s.cat))] }))
     .sort((a, b) => b.pri - a.pri || b.customer.total - a.customer.total);
 
-  /* ---------- 알림톡 템플릿 (카카오 알림톡 형식) ----------
+  /* ---------- 귀띔 템플릿 (카카오톡 귀띔 형식) ----------
      절세 템플릿은 고객 계좌 기준 구체 금액(예상 세금 · 절세액 · 세액공제액)을 본문과 정보 행에 넣는다. */
   const TEMPLATES = {
     cma: { name: '예수금 CMA 전환 안내', emoji: '💤', cat: '자금',

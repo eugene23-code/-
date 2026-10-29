@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>사이로그 알림톡</title>
+<title>귀띔 메시지 예시</title>
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="styles.css">
@@ -39,7 +39,7 @@
 <body>
 <div class="page">
   <div class="head">
-    <div><h1>고객 알림톡 예시</h1><p>사이로그가 계좌 로그에서 찾은 혜택을 카카오 알림톡으로 고객에게 전달하는 화면입니다.</p></div>
+    <div><h1>고객 귀띔 예시</h1><p>귀띔이 계좌 기록에서 찾은 혜택을 카카오톡으로 고객에게 전달하는 화면입니다.</p></div>
     <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
     <a href="app.html">PB 화면으로 →</a>
   </div>
@@ -55,7 +55,7 @@
       <h3>메시지가 만들어진 근거 (계좌 로그)</h3>
       <div class="basis" id="basis"></div>
       <div class="flow" id="flow"></div>
-      <div class="note">알림톡은 정보 안내와 상담 연결만 담고, 특정 종목의 매매 권유 표현은 넣지 않습니다. 시세·수익률은 <span id="market-note">시세 API 연동 전 임시값</span>입니다.</div>
+      <div class="note">귀띔은 정보 안내와 상담 연결만 담고, 특정 종목의 매매 권유 표현은 넣지 않습니다. 시세·수익률은 <span id="market-note">시세 API 연동 전 임시값</span>입니다.</div>
     </div>
   </div>
 </div>
@@ -90,7 +90,7 @@
     if (sig && sig.stock) rows.push([sig.stock.name, `${pct(sig.stock.chg)} · ${won(sig.stock.pnl)}`]);
     c.events.forEach(e => { if (e.t === 'TAX') rows.push(['해외주식 올해 실현손익', won(e.realized)]); if (e.t === 'MATURITY') rows.push([e.product, `${won(e.amount)} · ${e.date}`]); if (e.t === 'PENSION') rows.push([e.product + ' 납입', `${won(e.paid)} / ${won(e.limit)}`]); if (e.t === 'LARGE_IN') rows.push(['입금', `${won(e.amount)} · ${e.date}`]); if (e.t === 'ISA_MATURITY') rows.push(['ISA 만기', e.date]); if (e.t === 'ISA_LIMIT') rows.push(['ISA 잔여 한도', won(e.remain)]); });
     $('#basis').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
-    $('#flow').innerHTML = [['원장·시세 로그 수집', '예수금 잔고, 체결, 입출금, 보유 종목 시세'], ['신호 감지', sig ? sig.label + ' · ' + sig.why : '정기 발송 (주간)'], ['메시지 생성', '고객 이름·금액·날짜를 템플릿에 채움'], ['PB 확인 후 발송', '사이로그 PB 화면에서 미리보기 → 발송']].map(([t, d], i) => `<div class="step"><i>${i + 1}</i><div><b>${esc(t)}</b><br>${esc(d)}</div></div>`).join('');
+    $('#flow').innerHTML = [['원장·시세 로그 수집', '예수금 잔고, 체결, 입출금, 보유 종목 시세'], ['신호 감지', sig ? sig.label + ' · ' + sig.why : '정기 발송 (주간)'], ['메시지 생성', '고객 이름·금액·날짜를 템플릿에 채움'], ['PB 확인 후 발송', '귀띔 PB 화면에서 미리보기 → 발송']].map(([t, d], i) => `<div class="step"><i>${i + 1}</i><div><b>${esc(t)}</b><br>${esc(d)}</div></div>`).join('');
   }
   render();
 })();

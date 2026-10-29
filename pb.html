@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>사이로그 PB 경험</title>
+<title>귀띔 PB 경험</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,7 +178,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .sug b { font-size: 13.5px; display: block; }
 .sug small { font-size: 11.5px; color: var(--fg2); }
 
-/* 알림톡 창 */
+/* 귀띔 창 */
 .tpls { display: flex; flex-wrap: wrap; gap: 6px; }
 .tpls span { padding: 6px 10px; border-radius: 10px; background: var(--surface2); font-size: 12.5px; font-weight: 600; color: var(--fg2); }
 .tpls span.on { background: var(--brand-tint); color: var(--brand); box-shadow: inset 0 0 0 1.5px var(--brand); }
@@ -310,7 +310,7 @@ td.a { font-weight: 700; }
 
 <header class="top band">
   <div class="wrap">
-    <div class="logo"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#D8201F"/><path d="M8.6 21.6 L13.4 16.4 L17.6 19.4 L23.2 11.2" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.6" cy="21.6" r="3.3" fill="#fff"/><circle cx="23.2" cy="11.2" r="3.6" fill="#fff"/><circle cx="23.2" cy="11.2" r="1.5" fill="#D8201F"/></svg>사이로그</div>
+    <div class="logo"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#D8201F"/><path d="M15 8.4c-4.9 0-8.6 3.1-8.6 7.2 0 2.4 1.3 4.5 3.4 5.8l-.8 3.5 3.9-2.2c.7.1 1.4.2 2.1.2 4.9 0 8.6-3.1 8.6-7.2S19.9 8.4 15 8.4z" fill="#fff"/><path d="M11.4 15.4c1.2 1.6 2.4 2.3 3.6 2.3s2.4-.7 3.6-2.3" fill="none" stroke="#D8201F" stroke-width="2" stroke-linecap="round"/><circle cx="23.6" cy="9" r="4" fill="#D8201F"/><circle cx="23.6" cy="9" r="2.6" fill="#FFD43B"/></svg>귀띔</div>
     <nav class="ed" aria-label="소개 페이지"><a href="landing.html">고객 편</a><span>PB 편</span></nav>
     <span class="demo">시연용 가상 화면</span>
     <a class="go-app" href="app.html">서비스 이용하기</a>
@@ -320,21 +320,21 @@ td.a { font-weight: 700; }
 <section class="hero band">
   <div class="wrap">
     <div>
-      <h1>계좌는 사이로그가 읽고,<br><em>PB는 고객을</em><br>만나요</h1>
-      <p class="lead">관리 고객 56명의 잔고, 체결, 만기, 세금 기준일을 매일 아침 다 볼 수는 없어요. 사이로그가 먼저 읽고 오늘 연락할 사람을 급한 순서로 정리해 드려요.</p>
+      <h1>계좌는 귀띔이 읽고,<br><em>PB는 고객을</em><br>만나요</h1>
+      <p class="lead">관리 고객 56명의 잔고, 체결, 만기, 세금 기준일을 매일 아침 다 볼 수는 없어요. 귀띔이 먼저 읽고 오늘 연락할 사람을 급한 순서로 정리해 드려요.</p>
       <div class="persona"><span class="av">조</span><span><b>조은식 PB</b> · 서울WM센터 · 가상 업무 화면</span></div>
     </div>
-    <div class="win" aria-label="사이로그 오늘 할 일 화면">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 오늘 할 일</span></div>
+    <div class="win" aria-label="귀띔 오늘 할 일 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · 오늘 할 일</span></div>
       <div class="win-body">
         <div class="greet"><b>좋은 아침이에요, 조은식 PB님</b><span>오늘 연락이 필요한 고객 33명이 있어요. 급한 순서로 정리했어요.</span></div>
         <div class="prog"><div><i></i></div>9 / 33</div>
         <div class="tasks">
           <div class="task"><span class="pri p3">긴급</span><div><b>류승민</b><small>미수 변제 마감 290만원 · 오늘 15:30</small></div><span class="go">전화</span></div>
           <div class="task"><span class="pri p3">긴급</span><div><b>정하윤</b><small>대주주 기준 초과 · 기준일 12월 30일</small></div><span class="go">전화</span></div>
-          <div class="task"><span class="pri p2">높음</span><div><b>이도윤</b><small>ELB 3,000만원 만기 D-7</small></div><span class="go">알림톡</span></div>
-          <div class="task"><span class="pri p2">높음</span><div><b>김서연</b><small>예수금 4,800만원 62일째 쉬는 중</small></div><span class="go">알림톡</span></div>
-          <div class="task"><span class="pri p1">보통</span><div><b>서민재</b><small>연금저축 세액공제 한도 300만원 남음</small></div><span class="go">알림톡</span></div>
+          <div class="task"><span class="pri p2">높음</span><div><b>이도윤</b><small>ELB 3,000만원 만기 D-7</small></div><span class="go">귀띔</span></div>
+          <div class="task"><span class="pri p2">높음</span><div><b>김서연</b><small>예수금 4,800만원 62일째 쉬는 중</small></div><span class="go">귀띔</span></div>
+          <div class="task"><span class="pri p1">보통</span><div><b>서민재</b><small>연금저축 세액공제 한도 300만원 남음</small></div><span class="go">귀띔</span></div>
         </div>
       </div>
     </div>
@@ -350,7 +350,7 @@ td.a { font-weight: 700; }
     </div>
     <div class="days">
       <div class="tl b">
-        <div class="lb">사이로그 전 <span class="chip">찾고 옮겨 적는 하루</span></div>
+        <div class="lb">귀띔 전 <span class="chip">찾고 옮겨 적는 하루</span></div>
         <ol>
           <li><time>08:30</time><span>여러 화면을 오가며 고객 잔고와 만기를 하나씩 확인</span></li>
           <li><time>10:00</time><span>누구에게 먼저 전화할지 기억과 감으로 정하기</span></li>
@@ -360,10 +360,10 @@ td.a { font-weight: 700; }
         </ol>
       </div>
       <div class="tl a">
-        <div class="lb">사이로그 후 <span class="chip">사람에게 집중하는 하루</span></div>
+        <div class="lb">귀띔 후 <span class="chip">사람에게 집중하는 하루</span></div>
         <ol>
           <li><time>08:30</time><span>오늘 할 일이 급한 순서로 정리되어 있어요</span></li>
-          <li><time>09:00</time><span>알림톡은 템플릿을 고르면 고객별 숫자가 채워져요</span></li>
+          <li><time>09:00</time><span>귀띔은 템플릿을 고르면 고객별 숫자가 채워져요</span></li>
           <li><time>14:00</time><span>통화가 끝나면 요약과 일정 등록까지 끝나 있어요</span></li>
           <li><time>16:00</time><span>고객에게 맞는 상품 후보 5개를 근거와 함께 받아요</span></li>
           <li><time>17:30</time><span>완료한 일을 체크하고 내일 할 일을 확인해요</span></li>
@@ -381,16 +381,16 @@ td.a { font-weight: 700; }
       <h2>56개 계좌,<br>하나씩 안 열어봐도 돼요</h2>
       <div class="pair">
         <div class="b"><span>전</span><p>매일 아침 고객 계좌를 하나씩 열어 잔고, 체결, 만기를 확인했어요. 바쁜 날엔 다 못 보고 넘어가기도 했어요.</p></div>
-        <div class="a"><span>후</span><p>사이로그가 56개 계좌를 먼저 다 읽고, 오늘 챙길 일이 있는 계좌만 이유와 함께 남겨요. PB는 정리된 목록에서 하루를 시작해요.</p></div>
+        <div class="a"><span>후</span><p>귀띔이 56개 계좌를 먼저 다 읽고, 오늘 챙길 일이 있는 계좌만 이유와 함께 남겨요. PB는 정리된 목록에서 하루를 시작해요.</p></div>
       </div>
       <div class="calc">
         <div><small>하나씩 열어볼 때</small><b>56개 × 3분</b><span>약 2시간 48분</span></div>
-        <div class="on"><small>사이로그와 함께</small><b>목록 1개</b><span>급한 5명부터 바로 연락</span></div>
+        <div class="on"><small>귀띔과 함께</small><b>목록 1개</b><span>급한 5명부터 바로 연락</span></div>
       </div>
       <p class="note">계좌 하나 확인에 3분이 걸린다고 가정한 예시입니다. 기한이 걸린 일(만기·미수·담보비율·대주주 기준일)이 긴급, 큰 비중 종목 급락은 높음으로 올라와요.</p>
     </div>
     <div class="win" aria-label="계좌 56개 점검 결과">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 오늘 아침 계좌 점검</span></div>
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · 오늘 아침 계좌 점검</span></div>
       <div class="win-body">
         <div class="scan-h"><b>56개 계좌를 읽었어요</b><small>오전 7:00 · 원장·체결·입출금·시세·만기·세금 기준일</small></div>
         <div class="tiles" id="tiles" aria-hidden="true"></div>
@@ -417,7 +417,7 @@ td.a { font-weight: 700; }
       </div>
     </div>
     <div class="win" aria-label="고객 분석 화면">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 고객 상세</span></div>
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · 고객 상세</span></div>
       <div class="win-body">
         <div class="who-h"><span class="av">도</span><div><b>이도윤</b><small>안정추구형 · 거래 4년차 · 마지막 연락 14일 전</small></div></div>
         <div class="blk"><div class="mini-h"><span>함께 나눈 이야기</span><span>통화 요약에서</span></div>
@@ -451,7 +451,7 @@ td.a { font-weight: 700; }
       <p class="note">후보는 PB가 검토하는 자료이며, 고객에게 안내하기 전에 적합성 확인과 설명 절차를 거칩니다.</p>
     </div>
     <div class="win" aria-label="AI 펀드 매칭 화면">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · AI 펀드 매칭</span></div>
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · AI 펀드 매칭</span></div>
       <div class="win-body">
         <div class="meta"><span>이도윤 · <b>안정추구형</b> → 가입 가능 <b>4등급 이하</b></span><span>시연용 가상 펀드</span></div>
         <div class="wts" aria-hidden="true"><i style="flex:35"></i><i style="flex:25"></i><i style="flex:15"></i><i style="flex:15"></i><i style="flex:10"></i></div>
@@ -476,7 +476,7 @@ td.a { font-weight: 700; }
       </div>
     </div>
     <div class="win" aria-label="통화 요약 화면">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 통화 요약</span></div>
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · 통화 요약</span></div>
       <div class="win-body">
         <div class="sum-h"><b>이도윤 님 통화</b><small>10월 15일 14:02 · 12분</small></div>
         <div class="blk"><div class="mini-h"><span>요약</span></div>
@@ -502,7 +502,7 @@ td.a { font-weight: 700; }
       <p class="note">기준 금액과 날짜는 시연용 설정이며 실제 세법은 세무 상담으로 확인합니다.</p>
     </div>
     <div class="win" aria-label="대주주 양도세 감지 화면">
-      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 대주주 양도세</span></div>
+      <div class="win-bar"><i></i><i></i><i></i><span>귀띔 · 대주주 양도세</span></div>
       <div class="win-body">
         <div class="rule"><div><small>종목당 기준</small><b>50억원</b></div><div><small>기준일</small><b>12월 30일</b></div><div><small>마지막 거래일</small><b>12월 28일</b></div></div>
         <div class="mj">
@@ -521,7 +521,7 @@ td.a { font-weight: 700; }
       <h2>PB가 하는 한 번이<br>고객에게는 경험이 돼요</h2>
     </div>
     <div class="chain">
-      <div class="lk"><div class="pb"><div class="who">PB</div><p>알림톡 템플릿을 고르고 발송</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>내 계좌 숫자가 담긴 안내를 기한 전에 받아요</p></div></div>
+      <div class="lk"><div class="pb"><div class="who">PB</div><p>귀띔 템플릿을 고르고 발송</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>내 계좌 숫자가 담긴 안내를 기한 전에 받아요</p></div></div>
       <div class="lk"><div class="pb"><div class="who">PB</div><p>통화를 마치면 요약과 일정이 자동 등록</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>상담 전날 알림을 받고, 같은 설명을 다시 안 해요</p></div></div>
       <div class="lk"><div class="pb"><div class="who">PB</div><p>근거가 붙은 상품 후보를 검토</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>왜 나에게 맞는지부터 설명을 들어요</p></div></div>
     </div>
@@ -536,7 +536,7 @@ td.a { font-weight: 700; }
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th></th><th>사이로그 전</th><th>사이로그 후</th></tr></thead>
+        <thead><tr><th></th><th>귀띔 전</th><th>귀띔 후</th></tr></thead>
         <tbody>
           <tr><th>계좌 점검</th><td class="b">56개 계좌를 하나씩 열어 확인</td><td class="a">할 일이 있는 계좌만 이유와 함께</td></tr>
           <tr><th>연락 순서</th><td class="b">기억과 감</td><td class="a">기한과 손실 위험 기준</td></tr>
@@ -554,8 +554,8 @@ td.a { font-weight: 700; }
 
 <section class="end band alt">
   <div class="wrap">
-    <h2>찾는 일은 사이로그가,<br><em>만나는 일은 PB가.</em></h2>
-    <p>유진투자증권 PB와 고객을 잇는 계좌 로그 서비스</p>
+    <h2>찾는 일은 귀띔이,<br><em>만나는 일은 PB가.</em></h2>
+    <p>고객이 놓치기 전에, 유진투자증권 PB가 먼저 알려드려요</p>
   </div>
 </section>
 

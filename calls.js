@@ -1,5 +1,5 @@
 /* ============================================================
-   사이로그 — 통화 기록 · AI 요약 · 준법 감지 · 일정 엔진 (시연용)
+   귀띔 — 통화 기록 · AI 요약 · 준법 감지 · 일정 엔진 (시연용)
    - 통화 전사(transcript)는 가상 고객과의 가상 대화입니다.
    - 요약 · 일정 추출 · 준법 감지는 규칙 기반(LLM/STT 연동 전 단계)으로 동작합니다.
    - 흐름: 통화 종료 → 요약 생성 → 후속 일정 캘린더 자동 등록 → 준법 위험 표현 감지 → PB 알림
@@ -138,7 +138,7 @@ SAILOG.CALLS = (() => {
     : /반대매매|자동\s*매도/.test(t) ? 'deadline'
     : /만기/.test(t) ? 'maturity'
     : /전화|연락|통화/.test(t) ? 'callback'
-    : /보내|자료|서류|메일|문자|알림톡|정리해/.test(t) ? 'doc'
+    : /보내|자료|서류|메일|문자|알림톡|귀띔|정리해/.test(t) ? 'doc'
     : /까지|마감|변제|입금/.test(t) ? 'deadline'
     : 'followup';
   const titleOf = (kind, ctx) => kind === 'deadline' ? (/반대매매|자동\s*매도/.test(ctx) ? '반대매매 예정' : /입금|변제/.test(ctx) ? '입금 마감' : '마감')
@@ -206,8 +206,8 @@ SAILOG.CALLS = (() => {
   }
 
   /* ============================================================
-     4. 통화 기록 — calldata.js (사이로그_PB통화데이터_30건, 시연용 가상 · 정정본)
-        meta.record(사이로그 기록: 약속·후속조치) 와 meta.next(다음 연락 예정일)로 일정을 만든다.
+     4. 통화 기록 — calldata.js (귀띔_PB통화데이터_30건, 시연용 가상 · 정정본)
+        meta.record(귀띔 기록: 약속·후속조치) 와 meta.next(다음 연락 예정일)로 일정을 만든다.
      ============================================================ */
   const L = (who, text) => ({ who, text });
   const RAW_CALLS = (typeof window !== 'undefined' && window.SAILOG_CALLDATA && window.SAILOG_CALLDATA.calls) || [];
@@ -341,7 +341,7 @@ SAILOG.CALLS = (() => {
       for (let i = E.length - 1; i >= 0; i--) { const e = E[i]; if (e.custId === cc.id && e.auto && (e.kind === 'callback' || e.kind === 'visit') && e.date >= TODAY_ISO) E.splice(i, 1); }
       E.push({ id: 'cx-appt', date: cx.date, time: cx.time, kind: cx.visit ? 'visit' : 'callback', custId: cc.id, source: '고객 확정', confirmed: true,
         title: `${cc.name} · ${cx.topic} ${cx.visit ? '방문 상담' : '전화 상담'}`,
-        note: `고객이 알림톡에서 ${cx.changed ? '시간을 바꿔 ' : ''}확정 · ${cx.visit ? '서울WM센터 방문' : '전화 약 20분'} · 1시간 전 알림` });
+        note: `고객이 귀띔에서 ${cx.changed ? '시간을 바꿔 ' : ''}확정 · ${cx.visit ? '서울WM센터 방문' : '전화 약 20분'} · 1시간 전 알림` });
     }
     E.sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
     return (eventCache = E);

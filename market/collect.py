@@ -1,4 +1,4 @@
-"""사이로그 시장 데이터 수집기.
+"""귀띔 시장 데이터 수집기.
 
 data.js 의 STOCKS 마스터를 읽어 국내(KR)는 네이버 금융, 해외(US)는 yfinance 로 시세를 받아
   sailog/market.js        ← 브라우저용 (window.SAILOG_MARKET = {...})   file:// 로도 동작
@@ -139,7 +139,7 @@ def summarize(p: dict) -> str:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="사이로그 시장 데이터 수집기")
+    ap = argparse.ArgumentParser(description="귀띔 시장 데이터 수집기")
     ap.add_argument("--watch", type=int, metavar="SEC", help="지정 초마다 반복 수집")
     ap.add_argument("--history", type=int, default=0, metavar="DAYS", help="최근 N 영업일 종가 포함")
     ap.add_argument("--symbols", help="쉼표 구분 코드 목록 (data.js 대신 사용, 예: 005930,NVDA)")

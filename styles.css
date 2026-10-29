@@ -1,5 +1,5 @@
 /* ============================================================
-   사이로그 — 공용 스타일
+   귀띔 — 공용 스타일
    방향: 토스의 여백·둥근 카드 + 애플의 절제. 유진 레드는 포인트로만.
    ============================================================ */
 :root {
@@ -110,7 +110,7 @@ a { color: inherit; }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 #toast button { color: #FF8A8A; font-weight: 700; }
 
-/* ---------- 카카오 알림톡 렌더 ---------- */
+/* ---------- 카카오톡 귀띔 렌더 ---------- */
 .phone {
   width: 360px; max-width: 100%; aspect-ratio: 360 / 740; background: #111; border-radius: 44px; padding: 12px;
   box-shadow: 0 20px 60px rgba(0,0,0,.25), inset 0 0 0 2px #2a2a2a; margin: 0 auto;

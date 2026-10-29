@@ -1,5 +1,5 @@
 /* ============================================================
-   사이로그 — 일정(캘린더) · 통화 요약 · 고객 상세 통화 기록(준법 포함)
+   귀띔 — 일정(캘린더) · 통화 요약 · 고객 상세 통화 기록(준법 포함)
    - 일정 화면: 고객과의 약속·할 일만 표시 (통화 기록·세미나·준법 내용은 표시하지 않음)
    - 준법 점검: 고객 상세페이지의 '통화 기록' 카드와 통화 요약 모달에서만 표시
    index.html 의 앱 스크립트가 CAL.init(hooks) 로 연결. 데이터·분석은 calls.js(SAILOG.CALLS).
@@ -119,7 +119,7 @@ const CAL = (() => {
     const past = e.date < TODAY_ISO;
     const kindTag = `<span class="pill" style="background:color-mix(in srgb, ${K(e.kind).c} 12%, #fff);color:${K(e.kind).c}">${isPromise(e) ? '약속' : '할 일'} · ${K(e.kind).l}</span>`;
     const status = e.confirmed ? '<span class="pill ok">고객 확정</span>' : past ? '<span class="pill">지난 일정</span>' : '';
-    const why = e.confirmed ? `고객이 알림톡에서 직접 ${e.note && e.note.includes('바꿔') ? '시간을 바꿔 ' : ''}확정한 상담이에요.`
+    const why = e.confirmed ? `고객이 귀띔에서 직접 ${e.note && e.note.includes('바꿔') ? '시간을 바꿔 ' : ''}확정한 상담이에요.`
       : rec ? `${fmtDate(rec.date)} ${rec.time} ${rec.dir} 통화에서 잡힌 ${isPromise(e) ? '약속' : '할 일'}이에요.`
       : e.source === '직접 등록' ? 'PB가 직접 추가한 일정이에요.'
       : `${e.source || '원장'}에서 자동으로 올라온 일정이에요.`;

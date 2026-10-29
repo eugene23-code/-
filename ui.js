@@ -1,4 +1,4 @@
-/* 사이로그 공용 UI 헬퍼 — 알림톡 렌더, 토스트 */
+/* 귀띔 공용 UI 헬퍼 — 귀띔 렌더, 토스트 */
 const UI = (() => {
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -7,7 +7,7 @@ const UI = (() => {
     return messageHTML(t.name, t.build(c), time);
   }
 
-  /* 이미 만들어진 메시지 {title, body, info, buttons, notice?} 를 알림톡 말풍선으로 (템플릿 목록에 없는 개별 안내용: 펀드 안내 등) */
+  /* 이미 만들어진 메시지 {title, body, info, buttons, notice?} 를 귀띔 말풍선으로 (템플릿 목록에 없는 개별 안내용: 펀드 안내 등) */
   function messageHTML(name, m, time = '오전 9:12') {
     const t = { name };
     return `
@@ -17,8 +17,8 @@ const UI = (() => {
           <div class="ktalk-name">유진투자증권</div>
           <div class="ktalk-row">
             <div class="ktalk-bubble">
-              <div class="ktalk-tag">${esc(m.tag || '알림톡')}</div>
-              <div class="ktalk-head-img"><small>사이로그 · ${esc(t.name)}</small><div class="ktalk-title">${esc(m.title)}</div></div>
+              <div class="ktalk-tag">${esc(m.tag || '귀띔')}</div>
+              <div class="ktalk-head-img"><small>귀띔 · ${esc(t.name)}</small><div class="ktalk-title">${esc(m.title)}</div></div>
               <div class="ktalk-body">${esc(m.body)}</div>
               <div class="ktalk-info">${m.info.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>
               ${m.notice ? `<div class="ktalk-foot" style="color:#4e5968">${esc(m.notice)}</div>` : ''}
