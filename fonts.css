@@ -1,0 +1,11 @@
+/* Pretendard (가변 글꼴, v1.3.9, SIL OFL) — 인터넷 CDN 대신 프로젝트에 넣은 파일을 쓴다.
+   공유 링크(Artifact)는 외부 글꼴 CDN을 막고, 오프라인 시연에서도 같은 글꼴로 보이게 하기 위함.
+   한 파일 버전(build_single.py)에서는 이 링크를 빼고 셸이 FontFace로 글꼴을 넣는다. */
+@font-face {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src: url('fonts/PretendardVariable.woff2') format('woff2-variations'),
+       url('fonts/PretendardVariable.woff2') format('woff2');
+}

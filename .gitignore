@@ -1,0 +1,13 @@
+# 파이썬 가상환경 · 캐시 (시세 수집 스크립트용, 배포 불필요)
+market/.venv/
+__pycache__/
+*.pyc
+
+# 빌드 산출물 (build_single.py 로 다시 만들 수 있음)
+dist/
+
+# OS · 에디터
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/

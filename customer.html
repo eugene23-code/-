@@ -1,0 +1,571 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>사이로그 고객 화면</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* 왼쪽: 시나리오·단계 설명 패널 / 오른쪽: 실제로 눌러보는 고객 폰 */
+:root {
+  --brand: #D8201F;
+  --brand-tint: #FDECEC;
+  --bg: #F2F4F6;
+  --surface: #FFFFFF;
+  --surface2: #F7F8FA;
+  --fg: #191F28;
+  --fg2: #4E5968;
+  --fg3: #8B95A1;
+  --line: #E5E8EB;
+  --green: #14A36B;
+  --green-tint: #E3F6EE;
+  --kakao: #FEE500;
+  --kakao-fg: #191919;
+  --chat-bg: #BACEE0;
+  --frame: #191F28;
+  --font: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #FF4D4A; --brand-tint: #3A1C1E;
+    --bg: #101317; --surface: #1F242B; --surface2: #262C34;
+    --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2F363E;
+    --green: #2FC48A; --green-tint: #173328;
+    --chat-bg: #2A3440; --frame: #000000;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #FF4D4A; --brand-tint: #3A1C1E;
+  --bg: #101317; --surface: #1F242B; --surface2: #262C34;
+  --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2F363E;
+  --green: #2FC48A; --green-tint: #173328;
+  --chat-bg: #2A3440; --frame: #000000;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.55; letter-spacing: -0.02em; word-break: keep-all; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; letter-spacing: inherit; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+.page { max-width: 1040px; margin: 0 auto; padding-block: 40px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 56px; align-items: start; }
+
+/* 설명 패널 */
+.side { min-width: 0; position: sticky; top: 24px; }
+.badge { display: inline-block; font-size: 12.5px; font-weight: 700; color: var(--brand); background: var(--brand-tint); padding: 5px 10px; border-radius: 99px; }
+.side h1 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.25; margin-top: 16px; text-wrap: balance; }
+.side .lead { color: var(--fg2); margin-top: 10px; font-size: 16px; }
+.tabs { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--surface); padding: 6px; border-radius: 16px; }
+.tabs button { padding: 12px 8px; border-radius: 12px; font-weight: 700; color: var(--fg3); font-size: 14.5px; }
+.tabs button[aria-pressed="true"] { background: var(--brand); color: #fff; }
+.steps { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-direction: column; }
+.steps li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 10px 0; color: var(--fg3); }
+.steps li i { width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); font-style: normal; font-size: 13px; font-weight: 800; display: grid; place-items: center; }
+.steps li b { display: block; font-size: 15.5px; }
+.steps li span { font-size: 13.5px; }
+.steps li.past i { background: var(--fg3); border-color: var(--fg3); color: var(--surface); }
+.steps li.now { color: var(--fg); }
+.steps li.now i { background: var(--brand); border-color: var(--brand); color: #fff; }
+.steps li.now span { color: var(--fg2); }
+.behind { margin-top: 18px; background: var(--surface); border-radius: 18px; padding: 18px; }
+.behind .l { font-size: 12.5px; font-weight: 700; color: var(--brand); }
+.behind p { margin-top: 6px; font-size: 14.5px; color: var(--fg2); }
+.reset { margin-top: 14px; font-size: 13.5px; font-weight: 600; color: var(--fg3); text-decoration: underline; text-underline-offset: 3px; }
+.disc { margin-top: 22px; font-size: 12.5px; color: var(--fg3); line-height: 1.6; }
+
+/* 폰 */
+.phone { width: 390px; max-width: 100%; background: var(--frame); border-radius: 52px; padding: 12px; box-shadow: 0 30px 60px -24px rgba(25,31,40,.4); }
+.screen { height: 760px; border-radius: 40px; overflow: hidden; background: var(--surface); display: flex; flex-direction: column; position: relative; }
+.status { flex: none; height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-size: 14px; font-weight: 700; }
+.status .isl { width: 100px; height: 28px; border-radius: 20px; background: var(--frame); }
+.status .bt { font-size: 11px; letter-spacing: 1px; }
+.app { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.cta { flex: none; padding: 12px 18px 22px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+.btn { width: 100%; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 16px; background: var(--brand); color: #fff; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn.sub { background: var(--surface2); color: var(--fg2); }
+.nav { flex: none; height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-weight: 700; font-size: 15px; }
+.nav .back { width: 36px; height: 36px; border-radius: 10px; font-size: 22px; line-height: 1; }
+.nav .who { font-size: 12px; font-weight: 600; color: var(--fg3); margin-left: auto; }
+
+/* 카카오 채팅 */
+.screen.kakao, .screen.kakao .status { background: var(--chat-bg); }
+.kakao .nav { background: var(--chat-bg); }
+.kakao .scroll { padding: 4px 14px 20px; }
+.day { text-align: center; margin: 10px 0 14px; }
+.day span { display: inline-block; font-size: 11.5px; padding: 3px 12px; border-radius: 99px; background: rgba(0,0,0,.12); color: var(--fg); }
+.msg { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 12px; }
+.msg .pf { flex: none; width: 36px; height: 36px; border-radius: 13px; background: var(--brand); color: #fff; font-weight: 800; display: grid; place-items: center; }
+.msg .col { min-width: 0; flex: 1; max-width: 270px; }
+.msg .nm { font-size: 12px; color: var(--fg2); margin-bottom: 4px; }
+.msg .tm { font-size: 10.5px; color: var(--fg2); margin-top: 3px; }
+.bubble { background: var(--surface); border-radius: 4px 16px 16px 16px; overflow: hidden; font-size: 13px; line-height: 1.6; animation: pop .35s cubic-bezier(.2,.8,.2,1) both; }
+.bubble .kh { background: var(--kakao); color: var(--kakao-fg); font-weight: 700; font-size: 12.5px; padding: 9px 13px; }
+.bubble .bd { padding: 13px 13px 4px; }
+.bubble .bd b { display: block; font-size: 14.5px; margin-bottom: 6px; }
+.bubble .bd p { margin-bottom: 8px; color: var(--fg2); }
+.bubble .bd p strong { color: var(--fg); }
+.bubble .bd .box { background: var(--surface2); border-radius: 10px; padding: 10px; margin-bottom: 10px; font-size: 12.5px; color: var(--fg2); }
+.bubble .bd .box div { display: flex; justify-content: space-between; gap: 8px; }
+.bubble .bd .box div b { display: inline; font-size: 12.5px; margin: 0; color: var(--fg); text-align: right; }
+.bubble .acts { display: flex; flex-direction: column; gap: 6px; padding: 4px 13px 13px; }
+.bubble .acts button { padding: 10px; border-radius: 8px; background: var(--surface2); font-weight: 700; font-size: 13px; }
+.bubble .acts button.hot { background: var(--brand); color: #fff; animation: nudge 1.8s ease-in-out infinite; }
+@keyframes pop { from { transform: translateY(10px) scale(.98); } to { transform: none; } }
+@keyframes nudge { 0%, 100% { box-shadow: 0 0 0 0 rgba(216,32,31,.35); } 50% { box-shadow: 0 0 0 6px rgba(216,32,31,0); } }
+
+/* 고객 페이지 공통 */
+.pad { padding: 8px 22px 24px; }
+.eb { font-size: 13.5px; font-weight: 700; color: var(--brand); }
+.h { font-size: 24px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.35; margin-top: 6px; }
+.big { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin-top: 18px; }
+.muted { color: var(--fg3); font-size: 13.5px; }
+.card { background: var(--surface2); border-radius: 18px; padding: 16px; margin-top: 16px; }
+.card .t { font-size: 13px; font-weight: 700; color: var(--fg3); margin-bottom: 8px; }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 6px 0; font-size: 14px; }
+.row span { color: var(--fg2); }
+.row b { font-variant-numeric: tabular-nums; text-align: right; }
+.row b.up { color: var(--brand); }
+.bars { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.bar .lb { display: flex; justify-content: space-between; font-size: 13px; color: var(--fg2); margin-bottom: 5px; }
+.bar .lb b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.bar .tr { height: 12px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar .fl { height: 100%; border-radius: 99px; background: var(--fg3); transition: width .3s; }
+.bar.cma .fl { background: var(--brand); }
+.bar.cma .lb b { color: var(--brand); }
+input[type="range"] { width: 100%; accent-color: var(--brand); margin: 10px 0 2px; }
+.rng-cap { display: flex; justify-content: space-between; font-size: 12px; color: var(--fg3); }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; font-size: 14px; }
+.list li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; color: var(--fg2); }
+.list li::before { content: "•"; color: var(--brand); font-weight: 800; text-align: center; }
+.chk { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-top: 1px solid var(--line); cursor: pointer; font-size: 14.5px; }
+.chk input { width: 22px; height: 22px; accent-color: var(--brand); margin: 1px 0 0; flex: none; }
+.chk small { display: block; color: var(--fg3); font-size: 12.5px; margin-top: 2px; }
+.flow { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.flow > div { flex: 1; min-width: 0; background: var(--surface2); border-radius: 16px; padding: 14px; }
+.flow .arr { flex: none; color: var(--fg3); font-size: 18px; }
+.flow small { display: block; font-size: 12px; color: var(--fg3); }
+.flow b { font-size: 14.5px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: var(--brand-tint); color: var(--brand); }
+.appt { background: var(--brand); color: #fff; border-radius: 20px; padding: 18px; margin-top: 16px; }
+.appt .chip { background: rgba(255,255,255,.2); color: #fff; }
+.appt .when { font-size: 22px; font-weight: 800; margin-top: 10px; letter-spacing: -0.03em; }
+.appt .how { font-size: 13.5px; opacity: .85; margin-top: 2px; }
+.slots { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.slots button { text-align: left; padding: 15px 16px; border-radius: 14px; background: var(--surface2); font-size: 15px; font-weight: 600; border: 2px solid transparent; }
+.slots button small { display: block; color: var(--fg3); font-weight: 500; font-size: 12.5px; }
+.slots button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-tint); }
+.slots button:disabled { color: var(--fg3); cursor: not-allowed; text-decoration: line-through; }
+.okmark { width: 72px; height: 72px; border-radius: 50%; background: var(--green-tint); color: var(--green); font-size: 34px; font-weight: 800; display: grid; place-items: center; margin: 36px auto 0; animation: pop .45s cubic-bezier(.2,.8,.2,1) both; }
+.center { text-align: center; }
+.spin { width: 44px; height: 44px; border-radius: 50%; border: 4px solid var(--line); border-top-color: var(--brand); animation: rot .8s linear infinite; margin: 0 auto; }
+@keyframes rot { to { transform: rotate(360deg); } }
+.loading { position: absolute; inset: 0; background: color-mix(in srgb, var(--surface) 92%, transparent); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; font-weight: 700; z-index: 5; }
+.tiny { font-size: 11.5px; color: var(--fg3); text-align: center; padding: 4px 0 0; }
+
+/* 시연 모드 고객 폰 (?embed&mini · live.js 패널) */
+.mini .side { display: none; }
+html.mini.embed .page { display: block; max-width: none; padding: 6px; }
+.mini .phone { width: 100%; padding: 9px; border-radius: 44px; box-shadow: none; }
+.mini .screen { height: max(440px, calc(100vh - 40px)); border-radius: 36px; }
+.bubble .bd .ntc { font-size: 10.5px; line-height: 1.5; color: var(--fg3); margin-bottom: 8px; }
+.screen.lockscr { background: linear-gradient(160deg, #3A1F2B, #D8201F); color: #fff; }
+.screen.lockscr .status { color: #fff; }
+.wait { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; text-align: center; }
+.wait .wt { font-size: 64px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.wait .wd { font-size: 14px; opacity: .85; margin-top: 8px; }
+.wait .wn { margin-top: auto; margin-bottom: 30px; background: rgba(255,255,255,.16); border-radius: 18px; padding: 16px; font-size: 13px; line-height: 1.6; width: 100%; }
+.wait .wn b { display: block; font-size: 14.5px; margin-bottom: 2px; }
+.banner { position: absolute; top: 50px; left: 10px; right: 10px; z-index: 6; background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(10px); border-radius: 18px; padding: 11px 13px; box-shadow: 0 10px 30px rgba(0,0,0,.18); font-size: 12.5px; color: var(--fg2); animation: drop .45s cubic-bezier(.2,.8,.2,1) both; transition: transform .4s, opacity .4s; }
+.banner .bh { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--fg3); margin-bottom: 3px; }
+.banner .bh .k { width: 16px; height: 16px; border-radius: 4px; background: var(--kakao); color: var(--kakao-fg); font-size: 9px; font-weight: 900; display: grid; place-items: center; }
+.banner .bh span:last-child { margin-left: auto; }
+.banner b { display: block; color: var(--fg); font-size: 13.5px; }
+.banner.out { transform: translateY(-140%); opacity: 0; }
+@keyframes drop { from { transform: translateY(-140%); } to { transform: none; } }
+
+/* PB 워크스페이스(index.html · cx.js) 안에 ?embed 로 들어왔을 때: 시나리오 탭은 바깥에 있으므로 숨김 */
+.embed .tabs, .embed .side .badge { display: none; }
+.embed .page { padding-block: 8px 24px; }
+.embed .side h1 { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) { .bubble, .okmark, .bubble .acts button.hot { animation: none; } .spin { animation-duration: 2s; } }
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr; gap: 28px; padding-block: 24px 40px; }
+  .side { position: static; }
+  .phone { margin: 0 auto; }
+}
+@media (max-width: 440px) {
+  .phone { padding: 8px; border-radius: 40px; }
+  .screen { height: 700px; border-radius: 32px; }
+  .pad { padding: 8px 16px 20px; }
+}
+</style>
+
+<main class="page">
+  <aside class="side">
+    <span class="badge">시연용 가상 화면 · 가상 고객</span>
+    <h1 id="who-h1">고객 이도윤 님의 화면</h1>
+    <p class="lead">알림톡을 받은 고객이 무엇을 보고, 어떻게 다음 행동까지 가는지 직접 눌러보세요.</p>
+    <div class="tabs" role="group" aria-label="시나리오">
+      <button type="button" id="tab-cma" data-flow="cma">예수금 → CMA</button>
+      <button type="button" id="tab-call" data-flow="call">상담 전날 알림</button>
+    </div>
+    <ol class="steps" id="steps"></ol>
+    <div class="behind"><div class="l">이 단계에서 사이로그가 하는 일</div><p id="behind"></p></div>
+    <button type="button" class="reset" id="reset">처음부터 다시 보기</button>
+    <p class="disc"><span id="who-disc">이도윤</span> 님은 가상 고객이며 금액·날짜·금리는 시연용 가정입니다. 실제 계좌 개설·이체·인증은 일어나지 않습니다. 특정 상품의 가입을 권유하지 않습니다.</p>
+  </aside>
+  <div class="phone"><div class="screen" id="screen"></div></div>
+</main>
+
+<script>
+(() => {
+  const QS = new URLSearchParams(window.__SAILOG_QS || location.search);   // __SAILOG_QS: 한 파일 버전(dist)에서 주입
+  const EMBED = QS.has('embed'), MINI = QS.has('mini');   // mini: PB 화면 시연 모드의 고객 폰 패널 (live.js)
+  if (EMBED) document.documentElement.classList.add('embed');
+  if (MINI) document.documentElement.classList.add('mini');
+  let waiting = MINI;   // 시연 모드: PB가 알림톡을 보내기 전까지 잠금화면으로 대기
+  // 고객 행동 → PB 화면(live.js)에 알림: open · check · cma-done · appt
+  const tell = (type, extra = {}) => { if (EMBED && window.parent !== window) parent.postMessage({ sailogLive: { type, custId: P.custId, name: P.name, ...extra } }, '*'); };
+
+  /* ---------- 날짜 도우미 (시연 기준일 2026-10-29) ---------- */
+  const TODAY = '2026-10-29';
+  const p2 = (n) => String(n).padStart(2, '0');
+  const DOW = '일월화수목금토';
+  const dt = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const iso = (d) => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+  const addD = (s, n) => { const d = dt(s); d.setDate(d.getDate() + n); return iso(d); };
+  const nextBiz = (s) => { let x = addD(s, 1); while ([0, 6].includes(dt(x).getDay())) x = addD(x, 1); return x; };
+  const gap = (a, b) => Math.round((dt(a) - dt(b)) / 864e5);
+  const md = (s) => { const d = dt(s); return `${d.getMonth() + 1}월 ${d.getDate()}일 (${DOW[d.getDay()]})`; };
+  const mdShort = (s) => { const d = dt(s); return `${d.getMonth() + 1}월 ${d.getDate()}일`; };
+  const longDay = (s) => { const d = dt(s); return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${DOW[d.getDay()]}요일`; };
+  const ampm = (t) => { const [h, m] = t.split(':').map(Number); return `${h < 12 ? '오전' : '오후'} ${h % 12 || 12}:${p2(m)}`; };
+  const esc = (s) => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+  /* ---------- 고객(페르소나) ----------
+     기본: 가상 고객 이도윤 님 (PB 화면 고객 id 125, 10월 15일 통화 CALL-0031에서 잡힌 11월 3일 상담).
+     PB 화면(index.html · cx.js)에서 고객·알림톡을 골라 열면 postMessage { sailogPersona, flow } 로 바뀜. */
+  const DEF = {
+    custId: 125, name: '이도윤', cash: 12400000, idle: 47, rCma: 2.75, rDep: 0.1, lastTrade: '9월 12일 마지막 거래 후 그대로',
+    call: { date: '2026-11-03', time: '14:00', visit: false, topic: 'ELB 만기금 운용', fromCall: '2026-10-15', quote: false,
+      said: ['자녀 대학 등록금이 2027년 2월에 필요하다고 하셨어요.', '원금을 지키는 운용을 원하셨어요.', 'ELB 3,000만원이 11월 5일 만기라 그 전에 다시 연락드리기로 했어요.'],
+      agenda: ['ELB 만기금 3,000만원을 받을 계좌와 운용 방향', '등록금을 낼 때까지 자금 일정'],
+      prep: ['등록금으로 필요한 금액', '만기금 중 바로 쓰실 돈이 있는지'],
+      lead: '이번에는 <strong>11월 5일 만기되는 ELB 3,000만원</strong>을 어떻게 운용할지 이야기 나눌 예정이에요.',
+      limit: 'ELB 만기일(11월 5일) 전에 이야기 나눌 수 있는 시간이에요.' },
+    next: ['11월 5일 ELB 만기금이 들어오면 CMA로 옮길지 미리 여쭤볼게요.', 'CMA 금리가 바뀌면 알림톡으로 알려드려요.'],
+  };
+  let P = DEF;
+  function applyPersona(p) {
+    if (!p) { P = DEF; return; }
+    const call = p.call ? { quote: true, prep: ['궁금한 점이나 바뀐 자금 계획', '상담 때 함께 보고 싶은 자료'],
+      lead: `이번에는 <strong>${esc(p.call.topic)}</strong>에 대해 이야기 나눌 예정이에요.`, limit: '조은식 PB 일정에서 비어 있는 시간이에요.', ...p.call } : null;
+    P = { ...DEF, lastTrade: `${p.idle || 0}일째 운용되지 않은 예수금`,
+      next: ['큰 금액이 들어오면 CMA로 옮길지 미리 여쭤볼게요.', 'CMA 금리가 바뀌면 알림톡으로 알려드려요.'], ...p, call: call || DEF.call };
+  }
+  const isDefault = () => P === DEF;
+
+  /* ---------- 단계 (왼쪽 패널) ---------- */
+  const FLOWS = () => ({
+    cma: [
+      { id: 'chat', t: '알림톡 받기', d: '카카오톡으로 안내가 와요', b: P.tpl === 'deposit' ? `${P.name} 님 계좌에 큰 금액이 들어온 것을 입금 기록에서 찾았어요. 조은식 PB가 확인한 뒤 알림톡을 보냈어요.` : `예수금이 ${P.idle}일째 움직이지 않은 것을 계좌 기록에서 찾았어요. 조은식 PB가 내용을 확인한 뒤 알림톡을 보냈어요.` },
+      { id: 'idle', t: '내 돈 확인하기', d: '얼마가 얼마나 쉬었는지 봐요', b: '고객 계좌의 예수금과 미운용 일수로 계산해요. 옮길 금액은 고객이 직접 정하고, 생활비로 남길 돈도 고를 수 있어요.' },
+      { id: 'check', t: '꼭 알아야 할 것 확인', d: '상품 설명을 직접 읽어요', b: '예금자보호 여부, 금리 변동처럼 꼭 설명해야 하는 내용을 고객이 직접 확인해야 다음으로 넘어가요.' },
+      { id: 'move', t: 'CMA로 옮기기', d: '보낼 곳과 금액을 확인해요', b: '전환 요청은 담당 PB 화면에도 바로 표시돼요. 이 화면에서는 실제 이체가 일어나지 않아요.' },
+      { id: 'done', t: '완료', d: '결과와 다음 안내를 받아요', b: '완료 알림톡이 다시 오고, PB의 오늘 할 일에서 이 고객 건이 처리 완료로 바뀌어요.' },
+    ],
+    call: [
+      { id: 'chat', t: '전날 알림톡 받기', d: '상담 하루 전에 알려드려요', b: `${P.call.fromCall ? mdShort(P.call.fromCall) + ' 통화에서' : '통화에서'} PB가 약속한 연락이 PB 일정에 자동으로 등록됐어요. 그 일정 하루 전에 고객에게도 알림톡이 가요.` },
+      { id: 'appt', t: '상담 미리 보기', d: '지난 이야기와 이번 주제를 봐요', b: '지난 통화에서 고객이 말한 내용과 PB가 약속한 주제를 꺼내 보여드려요. 같은 설명을 다시 하지 않아도 돼요.' },
+      { id: 'resched', t: '시간 정하기', d: '괜찮은 시간을 골라요', b: 'PB 일정에서 비어 있는 시간만 보여드려요. 고른 시간은 PB 캘린더에 바로 반영돼요.' },
+      { id: 'ok', t: '확정', d: '1시간 전에 한 번 더 알려드려요', b: '확정 알림톡을 보내고, 상담 1시간 전에 다시 알려드려요. PB는 통화 시작 전에 지난 요약을 화면에서 봐요.' },
+    ],
+    info: [
+      { id: 'chat', t: '알림톡 받기', d: '내 계좌 숫자로 안내가 와요', b: `'${P.tplName || '안내'}' 신호를 계좌 기록에서 찾았어요. 조은식 PB가 확인한 뒤 고객 숫자를 채워 보냈어요.` },
+      { id: 'detail', t: '내용 자세히 보기', d: '숫자가 어디서 나왔는지 봐요', b: '알림톡의 숫자가 어떤 계좌 기록에서 나왔는지 고객이 직접 확인해요. 판단에 필요한 정보만 담고 매매 권유는 하지 않아요.' },
+      { id: 'book', t: '상담 시간 고르기', d: 'PB와 이야기할 시간을 정해요', b: 'PB 일정에서 비어 있는 시간만 보여드려요. 고른 시간은 PB 캘린더에 바로 반영돼요.' },
+      { id: 'ok', t: '확정', d: '1시간 전에 한 번 더 알려드려요', b: '확정 알림톡이 가고, PB의 일정에 고객이 고른 상담이 올라가요.' },
+    ],
+  });
+
+  /* ---------- 상담 시간 후보 ---------- */
+  const label = (s) => `${md(s.date)} ${ampm(s.time)}`;
+  const keyOf = (s) => s.date + s.time + (s.visit ? 'v' : '');
+  const toHM = (min) => `${p2(Math.floor(min / 60))}:${p2(min % 60)}`;
+  function callSlots() {
+    const c = P.call, d2 = nextBiz(c.date), [h, m] = c.time.split(':').map(Number), later = h * 60 + m + 150;
+    return [
+      { date: c.date, time: c.time, visit: c.visit, note: `지금 잡힌 시간 · ${c.visit ? '센터 방문' : '전화'}`, orig: true },
+      later <= 17 * 60 + 30 ? { date: c.date, time: toHM(later), note: '전화' } : null,
+      { date: d2, time: '10:00', note: '전화' },
+      { date: d2, time: '13:00', note: '이미 다른 상담이 있어요', off: true },
+      { date: d2, time: '15:00', visit: true, note: '서울WM센터 방문' },
+    ].filter(Boolean);
+  }
+  function bookSlots() {
+    const d1 = nextBiz(TODAY), d2 = nextBiz(d1);
+    return [
+      { date: d1, time: '10:00', note: '전화' }, { date: d1, time: '14:00', note: '전화' }, { date: d1, time: '16:00', note: '이미 다른 상담이 있어요', off: true },
+      { date: d2, time: '11:00', note: '전화' }, { date: d2, time: '15:00', visit: true, note: '서울WM센터 방문' },
+    ];
+  }
+  const slotList = () => (S.flow === 'call' ? callSlots() : bookSlots());
+  const chosen = () => S.slot || callSlots()[0];
+
+  /* ---------- 상태 ---------- */
+  const S = {};
+  const leaveDefault = () => { const keep = Math.min(2000000, P.cash * 0.2); return Math.max(0, Math.floor((P.cash - keep) / 100000) * 100000); };
+  const reset = (flow) => Object.assign(S, { flow, step: 'chat', amt: leaveDefault(), a: false, b: false, done: false, slot: null, picked: null, loading: false, opened: false, asked: false });
+  const $ = (s) => document.querySelector(s);
+  const comma = (n) => Math.round(n).toLocaleString('ko-KR');
+  const man = (n) => { const m = Math.round(n / 10000); return m >= 10000 ? `${Math.floor(m / 10000)}억 ${m % 10000 ? comma(m % 10000) + '만' : ''}원`.replace(' 원', '원') : `${comma(m)}만원`; };
+  const won = (n) => `${comma(n)}원`;
+
+  const status = () => `<div class="status"><span>9:41</span><span class="isl"></span><span class="bt">5G ▮▮▮</span></div>`;
+  const nav = (title, back) => `<div class="nav">${back ? `<button type="button" class="back" data-go="${back}" aria-label="뒤로">‹</button>` : ''}<span>${title}</span>${back ? '<span class="who">유진투자증권</span>' : ''}</div>`;
+  const msg = (inner, time, first = true, tag = '알림톡 도착') => `<div class="msg"><span class="pf" ${first ? '' : 'style="visibility:hidden"'}>유</span><div class="col">${first ? '<div class="nm">유진투자증권</div>' : ''}<div class="bubble"><div class="kh">${tag}</div>${inner}</div><div class="tm">${time}</div></div></div>`;
+  // PB 화면 알림톡 템플릿(data.js TEMPLATES) 문구를 그대로 말풍선으로
+  const tplBubble = (m) => `<div class="bd"><b>${esc(m.title)}</b>${m.body.split(/\n\n+/).map(t => `<p>${esc(t)}</p>`).join('')}
+    ${m.rows && m.rows.length ? `<div class="box">${m.rows.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
+    ${m.notice ? `<p class="ntc">${esc(m.notice)}</p>` : ''}</div>`;
+  const doneBubble = (time) => { const s = chosen(); return msg(`<div class="bd"><b>상담 시간이 정해졌어요</b>
+    <p><strong>${label(s)}</strong>에 조은식 PB가 ${s.visit ? '서울WM센터에서 기다릴게요' : '전화드릴게요'}.</p>
+    <p>상담 1시간 전에 한 번 더 알려드릴게요.</p></div>`, time); };
+  const okScreen = (dday, topic) => { const s = chosen(); return { html: `<div class="scroll"><div class="pad center">
+      <div class="okmark">✓</div>
+      <h2 class="h" style="margin-top:20px">상담 시간이<br>정해졌어요</h2>
+      <div class="appt" style="text-align:left"><span class="chip">D-${dday(s)}</span><div class="when">${label(s)}</div><div class="how">${s.visit ? '서울WM센터 방문' : '전화 상담'} · 조은식 PB</div></div>
+      <div class="card" style="text-align:left">
+        <div class="row"><span>PB 일정</span><b>바로 반영됐어요</b></div>
+        <div class="row"><span>다시 알림</span><b>상담 1시간 전</b></div>
+        <div class="row"><span>상담 주제</span><b>${esc(topic)}</b></div>
+      </div>
+    </div></div>
+    <div class="cta"><button type="button" class="btn" data-act="finish">카카오톡으로 돌아가기</button></div>` }; };
+  const slotScreen = (back, eb, sub) => ({ html: `${nav('시간 정하기', back)}<div class="scroll"><div class="pad">
+      <div class="eb">${eb}</div>
+      <h2 class="h">편한 시간을<br>골라주세요</h2>
+      <p class="muted" style="margin-top:8px">${sub}</p>
+      <div class="slots">
+        ${slotList().map(s => `<button type="button" data-slot="${keyOf(s)}" aria-pressed="${S.picked === keyOf(s)}" ${s.off ? 'disabled' : ''}>${label(s)}<small>${s.note}</small></button>`).join('')}
+      </div>
+    </div></div>
+    <div class="cta"><button type="button" class="btn" data-act="pick" ${S.picked ? '' : 'disabled'}>이 시간으로 정하기</button></div>` });
+
+  const V = {
+    cma: {
+      chat: () => ({ kakao: true, html: `${nav('유진투자증권')}<div class="scroll">
+        <div class="day"><span>${longDay(TODAY)}</span></div>
+        ${msg(`${P.msg ? tplBubble(P.msg) : `<div class="bd"><b>쉬고 있는 예수금이 있어요</b>
+          <p>${P.name} 고객님, 계좌의 예수금 <strong>${man(P.cash)}</strong>이 <strong>${P.idle}일째</strong> 그대로예요.</p>
+          <p>같은 돈을 CMA 계좌에 두면 연 ${P.rCma}% 기준으로 1년에 약 <strong>${man(P.cash * P.rCma / 100)}</strong>을 더 받을 수 있어요. 입출금은 지금처럼 자유롭습니다.</p>
+          <p>담당 PB 조은식이 전환 절차를 도와드릴게요.</p></div>`}
+          <div class="acts"><button type="button" class="${S.done ? '' : 'hot'}" data-go="idle">${P.tpl === 'deposit' ? 'CMA로 옮기기' : '내 예수금 확인하기'}</button><button type="button" data-act="ask" ${S.asked ? 'disabled' : ''}>${S.asked ? '상담 요청함' : '담당 PB와 상담하기'}</button></div>`, '오전 9:00')}
+        ${S.asked ? msg(`<div class="bd"><b>상담 요청이 접수됐어요</b><p>${P.name} 고객님, 담당 PB 조은식이 오늘 중으로 연락드릴게요.</p></div>`, '오전 9:02') : ''}
+        ${S.done ? msg(`<div class="bd"><b>CMA로 옮기기를 마쳤어요</b>
+          <p>${P.name} 고객님, 요청하신 <strong>${man(S.amt)}</strong>이 CMA 계좌로 옮겨졌어요. 오늘부터 하루 단위로 이자가 붙어요.</p>
+          <div class="box"><div><span>CMA 잔액</span><b>${won(S.amt)}</b></div><div><span>위탁계좌에 남긴 돈</span><b>${won(P.cash - S.amt)}</b></div></div>
+          <p>궁금한 점은 담당 PB 조은식에게 편하게 물어보세요.</p></div>`, '오전 9:04') : ''}
+      </div>` }),
+      idle: () => {
+        const dep = S.amt * P.rDep / 100, cma = S.amt * P.rCma / 100, max = P.cash * P.rCma / 100;
+        return { html: `${nav('내 계좌 알림', 'chat')}<div class="scroll"><div class="pad">
+          <div class="eb">${P.tpl === 'deposit' ? '들어온 돈' : '쉬고 있는 돈'}</div>
+          <h2 class="h">${P.idle > 3 ? `예수금이 ${P.idle}일째<br>그대로 있어요` : '입금된 돈이<br>예수금으로 대기 중이에요'}</h2>
+          <div class="big">${won(P.cash)}</div>
+          <p class="muted">주식 위탁계좌 · ${esc(P.lastTrade)}</p>
+          <div class="card"><div class="t">CMA로 옮길 금액</div>
+            <div class="row"><span>옮길 돈</span><b class="up" id="v-amt">${won(S.amt)}</b></div>
+            <input type="range" id="amt" min="0" max="${P.cash}" step="100000" value="${S.amt}" aria-label="CMA로 옮길 금액">
+            <div class="rng-cap"><span>0원</span><span>전액</span></div>
+            <div class="row"><span>위탁계좌에 남길 돈</span><b id="v-left">${won(P.cash - S.amt)}</b></div>
+          </div>
+          <div class="card"><div class="t">1년 동안 받는 이자 (세전 · 가정)</div>
+            <div class="bars">
+              <div class="bar"><div class="lb"><span>예수금 그대로 (연 ${P.rDep}%)</span><b id="v-dep">${won(dep)}</b></div><div class="tr"><div class="fl" id="f-dep" style="width:${dep / max * 100}%"></div></div></div>
+              <div class="bar cma"><div class="lb"><span>CMA (연 ${P.rCma}%)</span><b id="v-cma">${won(cma)}</b></div><div class="tr"><div class="fl" id="f-cma" style="width:${cma / max * 100}%"></div></div></div>
+            </div>
+            <div class="row" style="margin-top:8px"><span>하루로 치면</span><b id="v-day">약 ${won(cma / 365)}</b></div>
+          </div>
+          <p class="tiny" style="margin-top:14px">금리는 시연용 가정이며 실제 금리는 바뀔 수 있어요.</p>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" id="go-check" data-go="check" ${S.amt ? '' : 'disabled'}>CMA로 옮기기</button><button type="button" class="btn sub" data-act="ask" ${S.asked ? 'disabled' : ''}>${S.asked ? 'PB에게 상담 요청함' : 'PB에게 먼저 물어보기'}</button></div>` };
+      },
+      check: () => ({ html: `${nav('CMA 알아보기', 'idle')}<div class="scroll"><div class="pad">
+          <div class="eb">옮기기 전에</div>
+          <h2 class="h">꼭 알아두실<br>내용이에요</h2>
+          <div class="card"><div class="t">CMA(RP형)는 이런 상품이에요</div>
+            <ul class="list">
+              <li>하루만 맡겨도 이자가 붙고, 입출금과 이체는 지금처럼 자유로워요.</li>
+              <li>예금자보호법에 따라 보호되는 상품이 아니에요.</li>
+              <li>금리는 시장 상황에 따라 바뀔 수 있어요.</li>
+              <li>주식을 살 때는 CMA에서 바로 결제할 수 있어요.</li>
+            </ul>
+          </div>
+          <div style="margin-top:16px">
+            <label class="chk" for="ck-a"><input type="checkbox" id="ck-a" ${S.a ? 'checked' : ''}><span>예금자보호 대상이 아니라는 것을 이해했어요<small>필수</small></span></label>
+            <label class="chk" for="ck-b"><input type="checkbox" id="ck-b" ${S.b ? 'checked' : ''}><span>상품설명서와 약관을 확인했어요<small>필수 · 시연용 문서</small></span></label>
+          </div>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" id="go-move" data-go="move" ${S.a && S.b ? '' : 'disabled'}>확인했어요</button></div>` }),
+      move: () => ({ html: `${nav('CMA로 옮기기', 'check')}<div class="scroll"><div class="pad">
+          <div class="eb">마지막 확인</div>
+          <h2 class="h">${man(S.amt)}을<br>CMA로 옮길게요</h2>
+          <div class="flow"><div><small>보내는 곳</small><b>주식 위탁계좌</b></div><span class="arr">→</span><div><small>받는 곳</small><b>CMA 계좌 (새로 만듦)</b></div></div>
+          <div class="card">
+            <div class="row"><span>옮길 금액</span><b>${won(S.amt)}</b></div>
+            <div class="row"><span>위탁계좌에 남는 돈</span><b>${won(P.cash - S.amt)}</b></div>
+            <div class="row"><span>예상 이자 (1년 · 세전 · 가정)</span><b class="up">약 ${won(S.amt * P.rCma / 100)}</b></div>
+            <div class="row"><span>수수료</span><b>없음</b></div>
+          </div>
+          <p class="tiny" style="margin-top:14px">시연 화면이라 실제 인증·이체는 일어나지 않아요.</p>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" data-act="confirm">인증하고 옮기기</button></div>
+        ${S.loading ? '<div class="loading"><div class="spin"></div>본인 확인 중이에요</div>' : ''}` }),
+      done: () => ({ html: `<div class="scroll"><div class="pad center">
+          <div class="okmark">✓</div>
+          <h2 class="h" style="margin-top:20px">${man(S.amt)}을<br>CMA로 옮겼어요</h2>
+          <p class="muted" style="margin-top:8px">오늘부터 하루 단위로 이자가 붙어요</p>
+          <div class="card" style="text-align:left">
+            <div class="row"><span>CMA 잔액</span><b>${won(S.amt)}</b></div>
+            <div class="row"><span>하루 이자 (세전 · 가정)</span><b class="up">약 ${won(S.amt * P.rCma / 100 / 365)}</b></div>
+            <div class="row"><span>담당 PB</span><b>조은식 PB에게 전달됨</b></div>
+          </div>
+          <div class="card" style="text-align:left"><div class="t">다음에 이렇게 알려드려요</div>
+            <ul class="list">${P.next.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" data-act="finish">카카오톡으로 돌아가기</button></div>` }),
+    },
+    call: {
+      chat: () => { const c = P.call, s0 = callSlots()[0]; return { kakao: true, html: `${nav('유진투자증권')}<div class="scroll">
+        <div class="day"><span>${longDay(addD(c.date, -1))}</span></div>
+        ${msg(`<div class="bd"><b>내일 상담 일정이 있어요</b>
+          <p>${P.name} 고객님, ${c.fromCall ? `지난 ${mdShort(c.fromCall)} 통화에서 ` : ''}약속드린 상담 일정을 알려드려요.</p>
+          <div class="box"><div><span>일시</span><b>${label(s0)}</b></div><div><span>방식</span><b>${c.visit ? '서울WM센터 방문' : '전화 · 약 20분'}</b></div><div><span>담당</span><b>조은식 PB</b></div></div>
+          <p>${c.lead}</p></div>
+          <div class="acts"><button type="button" class="${S.done ? '' : 'hot'}" data-go="appt">상담 내용 미리 보기</button><button type="button" data-go="resched">시간 바꾸기</button></div>`, '오후 6:00')}
+        ${S.done ? doneBubble('오후 6:03') : ''}
+      </div>` }; },
+      appt: () => { const c = P.call, s0 = callSlots()[0]; return { html: `${nav('다가오는 상담', 'chat')}<div class="scroll"><div class="pad">
+          <div class="eb">내일 상담</div>
+          <h2 class="h">조은식 PB와<br>이렇게 이야기해요</h2>
+          <div class="appt"><span class="chip">D-1</span><div class="when">${label(s0)}</div><div class="how">${c.visit ? '서울WM센터 방문' : '전화 상담 · 약 20분'} · 조은식 PB</div></div>
+          ${c.said && c.said.length ? `<div class="card"><div class="t">${c.quote ? '지난 통화에서 하신 말씀' : '지난 상담에서 나눈 이야기'}${c.fromCall ? ` · ${mdShort(c.fromCall)} 통화` : ''}</div>
+            <ul class="list">${c.said.map(t => `<li>${c.quote ? `“${esc(t)}”` : esc(t)}</li>`).join('')}</ul></div>` : ''}
+          <div class="card"><div class="t">이번에 이야기할 것</div>
+            <ul class="list">${c.agenda.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+          <div class="card"><div class="t">미리 생각해 두시면 좋아요</div>
+            <ul class="list">${c.prep.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" data-act="keep">이 시간 좋아요</button><button type="button" class="btn sub" data-go="resched">시간 바꾸기</button></div>` }; },
+      resched: () => slotScreen('appt', '조은식 PB 일정 기준', P.call.limit),
+      ok: () => okScreen((s) => Math.max(1, gap(s.date, addD(P.call.date, -1))), P.call.topic),
+    },
+    info: {
+      chat: () => ({ kakao: true, html: `${nav('유진투자증권')}<div class="scroll">
+        <div class="day"><span>${longDay(TODAY)}</span></div>
+        ${msg(`${tplBubble(P.msg)}
+          <div class="acts"><button type="button" class="${S.done ? '' : 'hot'}" data-go="detail">${esc(P.msg.buttons[0])}</button><button type="button" data-go="book">PB 상담 예약</button></div>`, '오전 9:00', true, P.msg.tag || '알림톡 도착')}
+        ${S.done ? doneBubble('오전 9:06') : ''}
+      </div>` }),
+      detail: () => ({ html: `${nav(esc(P.tplName), 'chat')}<div class="scroll"><div class="pad">
+          <div class="eb">${esc(P.tplName)}</div>
+          <h2 class="h">${esc(P.msg.title)}</h2>
+          <div class="card"><div class="t">${P.name} 님 계좌 기준</div>
+            ${P.msg.rows.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>
+          <div class="card"><div class="t">알아두시면 좋아요</div>
+            ${P.msg.body.split(/\n\n+/).slice(1).map(t => `<p style="font-size:14px;color:var(--fg2);margin-bottom:8px">${esc(t)}</p>`).join('')}</div>
+          <p class="tiny" style="margin-top:14px">계좌 기록으로 계산한 안내이며, 어떻게 할지는 고객님이 결정하세요.</p>
+        </div></div>
+        <div class="cta"><button type="button" class="btn" data-go="book">PB와 상담 예약하기</button><button type="button" class="btn sub" data-go="chat">카카오톡으로 돌아가기</button></div>` }),
+      book: () => slotScreen('detail', '조은식 PB 일정 기준', `${esc(P.tplName)} 내용으로 이야기 나눌 수 있는 시간이에요.`),
+      ok: () => okScreen((s) => Math.max(1, gap(s.date, TODAY)), P.tplName),
+    },
+  };
+
+  function render() {
+    const steps = FLOWS()[S.flow];
+    let idx = steps.findIndex(s => s.id === S.step);
+    if (S.step === 'chat' && S.done) idx = steps.length - 1;
+    $('#who-h1').textContent = `고객 ${P.name} 님의 화면`;
+    $('#who-disc').textContent = P.name;
+    document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.flow === S.flow));
+    $('#steps').innerHTML = steps.map((s, i) => `<li class="${i < idx ? 'past' : i === idx ? 'now' : ''}"><i>${i < idx ? '✓' : i + 1}</i><div><b>${s.t}</b><span>${s.d}</span></div></li>`).join('');
+    $('#behind').textContent = steps[idx].b;
+    const sc = $('#screen');
+    if (waiting) {
+      sc.className = 'screen lockscr';
+      sc.innerHTML = status() + `<div class="wait"><div class="wt">9:41</div><div class="wd">${longDay(TODAY)}</div>
+        <div class="wn"><b>새 알림이 없어요</b>PB 화면에서 알림톡을 보내면<br>이 폰에 바로 도착해요</div></div>`;
+      return;
+    }
+    const v = V[S.flow][S.step]();
+    sc.className = 'screen' + (v.kakao ? ' kakao' : '');
+    sc.innerHTML = status() + `<div class="app">${v.html}</div>`;
+    const r = $('#amt');
+    if (r) r.oninput = () => {
+      S.amt = Number(r.value);
+      const dep = S.amt * P.rDep / 100, cma = S.amt * P.rCma / 100, max = P.cash * P.rCma / 100;
+      $('#v-amt').textContent = won(S.amt); $('#v-left').textContent = won(P.cash - S.amt);
+      $('#v-dep').textContent = won(dep); $('#v-cma').textContent = won(cma); $('#v-day').textContent = `약 ${won(cma / 365)}`;
+      $('#f-dep').style.width = dep / max * 100 + '%'; $('#f-cma').style.width = cma / max * 100 + '%';
+      $('#go-check').disabled = !S.amt;
+    };
+    ['a', 'b'].forEach(k => { const c = $('#ck-' + k); if (c) c.onchange = () => { S[k] = c.checked; $('#go-move').disabled = !(S.a && S.b); }; });
+  }
+
+  const go = (step) => {
+    if (S.step === 'chat' && step !== 'chat' && !S.opened) { S.opened = true; tell('open', { flow: S.flow }); }
+    if (step === 'move') tell('check');
+    S.step = step; S.loading = false; render(); const sc = $('.scroll'); if (sc) sc.scrollTop = 0; };
+  // PB 캘린더 연동: 고객이 확정한 상담 시간을 저장 → 사이로그 PB 화면(index.html) 일정에 '고객 확정' 약속으로 반영 (calls.js events)
+  const APPT_KEY = 'sailog.cx.appt';
+  const syncAppt = () => {
+    const s = chosen();
+    const appt = { custId: P.custId, date: s.date, time: s.time, visit: !!s.visit, slot: label(s), topic: S.flow === 'call' ? P.call.topic : P.tplName,
+      changed: S.flow === 'call' && !s.orig, at: new Date().toISOString() };
+    try { localStorage.setItem(APPT_KEY, JSON.stringify(appt)); } catch (e) {}
+    tell('appt', { slot: appt.slot, topic: appt.topic, visit: appt.visit });
+  };
+  const toEnd = () => setTimeout(() => { const sc = $('.scroll'); if (sc) sc.scrollTop = sc.scrollHeight; }, 50);
+  const ACT = {
+    confirm: () => { S.loading = true; render(); setTimeout(() => { go('done'); tell('cma-done', { amt: S.amt }); }, 1300); },
+    keep: () => { S.slot = null; syncAppt(); go('ok'); },
+    pick: () => { const s = slotList().find(x => keyOf(x) === S.picked); S.slot = s && !s.orig ? s : (S.flow === 'call' ? null : s); syncAppt(); go('ok'); },
+    finish: () => { S.done = true; go('chat'); toEnd(); },
+    // 고객이 PB 상담을 요청 → PB 화면(live.js)에 알림 + 오늘 일정 등록
+    ask: () => { if (S.asked) return; S.asked = true; tell('ask', { from: S.step === 'chat' ? '알림톡' : '예수금 확인 화면' }); go('chat'); toEnd(); },
+  };
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-go],[data-act],[data-flow],[data-slot]');
+    if (!t || t.disabled) return;
+    if (t.dataset.flow) { applyPersona(null); try { if (location.hash !== '#' + t.dataset.flow) location.hash = t.dataset.flow; } catch (e) {} reset(t.dataset.flow); render(); }
+    else if (t.dataset.slot) { S.picked = t.dataset.slot; render(); }
+    else if (t.dataset.go) go(t.dataset.go);
+    else ACT[t.dataset.act]();
+  });
+  $('#reset').onclick = () => { if (S.flow !== 'cma') { try { localStorage.removeItem(APPT_KEY); } catch (e) {} } reset(S.flow); render(); };
+  const canRun = (f) => f === 'cma' || f === 'call' || (f === 'info' && P.msg);
+  const fromHash = () => { const h = location.hash.slice(1) || window.__SAILOG_HASH || ''; reset(canRun(h) ? h : 'cma'); render(); };   // __SAILOG_HASH: 한 파일 버전(dist)에서 주입
+  window.addEventListener('hashchange', fromHash);
+  // PB 화면(cx.js)이 고른 고객으로 바꿔 그리기
+  window.addEventListener('message', (e) => {
+    const d = e.data; if (!d || !('sailogPersona' in d)) return;
+    applyPersona(d.sailogPersona);
+    if (d.live) waiting = false;
+    reset(canRun(d.flow) ? d.flow : 'cma'); render();
+    // 시연 모드: 알림톡 도착 배너가 위에서 내려왔다 들어감
+    if (d.live && P.msg) {
+      const sc = $('#screen');
+      sc.insertAdjacentHTML('beforeend', `<div class="banner" role="status"><div class="bh"><span class="k">K</span>카카오톡 · 유진투자증권<span>지금</span></div><b>${esc(P.msg.title)}</b><span>${esc(P.name)} 고객님께 알림톡이 도착했어요</span></div>`);
+      setTimeout(() => { const b = $('#screen .banner'); if (b) b.classList.add('out'); }, 3200);
+    }
+  });
+  fromHash();
+  if (EMBED && window.parent !== window) parent.postMessage({ sailogReady: true }, '*');
+})();
+</script>

@@ -1,0 +1,559 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>사이로그 고객 경험</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<style>
+/* 토스식 원 메시지 섹션 스크롤: 큰 헤드라인 + 폰 목업, 섹션마다 '전 → 후' 한 쌍 */
+:root {
+  --brand: #D8201F;
+  --brand-tint: #FDECEC;
+  --bg: #FFFFFF;
+  --bg-alt: #F2F4F6;
+  --surface: #FFFFFF;
+  --fg: #191F28;
+  --fg2: #4E5968;
+  --fg3: #8B95A1;
+  --line: #E5E8EB;
+  --before: #B0B8C1;
+  --before-bg: #E9ECEF;
+  --kakao: #FEE500;
+  --kakao-fg: #191919;
+  --chat-bg: #BACEE0;
+  --frame: #191F28;
+  --lock-a: #3A1F2B;
+  --lock-b: #D8201F;
+  --noti: rgba(255,255,255,.82);
+  --noti-fg: #191F28;
+  --font: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --r: 22px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #FF4D4A; --brand-tint: #3A1C1E;
+    --bg: #101317; --bg-alt: #181C21; --surface: #1F242B;
+    --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2B3138;
+    --before: #5C6670; --before-bg: #252A31;
+    --chat-bg: #2A3440; --frame: #000000;
+    --lock-a: #1A0F14; --lock-b: #8E1414;
+    --noti: rgba(40,44,52,.86); --noti-fg: #F2F4F6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #FF4D4A; --brand-tint: #3A1C1E;
+  --bg: #101317; --bg-alt: #181C21; --surface: #1F242B;
+  --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2B3138;
+  --before: #5C6670; --before-bg: #252A31;
+  --chat-bg: #2A3440; --frame: #000000;
+  --lock-a: #1A0F14; --lock-b: #8E1414;
+  --noti: rgba(40,44,52,.86); --noti-fg: #F2F4F6;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font);
+  font-size: 17px; line-height: 1.6; letter-spacing: -0.02em;
+  word-break: keep-all; overflow-wrap: break-word; -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+h1, h2 { text-wrap: balance; font-weight: 800; letter-spacing: -0.035em; line-height: 1.25; }
+
+.band { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.band.alt { background: var(--bg-alt); }
+.wrap { max-width: 1040px; margin: 0 auto; }
+
+/* 상단 바 */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--bg); }
+.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
+.logo i { width: 26px; height: 26px; border-radius: 8px; background: var(--brand); color: #fff; font-style: normal; font-size: 14px; display: grid; place-items: center; }
+.demo { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--brand); background: var(--brand-tint); padding: 5px 10px; border-radius: 99px; white-space: nowrap; }
+
+.ed { margin-left: 6px; display: flex; gap: 2px; background: var(--bg-alt); padding: 3px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+.ed a, .ed span { padding: 4px 10px; border-radius: 8px; text-decoration: none; color: var(--fg3); }
+.ed span { background: var(--surface); color: var(--fg); }
+@media (max-width: 480px) { .ed { display: none; } }
+
+/* 히어로 */
+.hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; padding-block: 72px 88px; }
+.hero h1 { font-size: clamp(38px, 6.2vw, 66px); }
+.hero h1 em { font-style: normal; color: var(--brand); }
+.hero .lead { margin-top: 22px; font-size: clamp(17px, 2vw, 20px); color: var(--fg2); max-width: 30em; }
+.persona { margin-top: 28px; display: inline-flex; align-items: center; gap: 12px; padding: 10px 16px 10px 10px; border-radius: 99px; background: var(--bg-alt); font-size: 14.5px; color: var(--fg2); }
+.persona b { color: var(--fg); }
+.persona .av { width: 34px; height: 34px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 800; color: var(--brand); border: 1px solid var(--line); }
+
+/* 폰 */
+.phone { width: 300px; max-width: 100%; margin: 0 auto; background: var(--frame); border-radius: 48px; padding: 11px; box-shadow: 0 30px 60px -20px rgba(25,31,40,.35); }
+.screen { border-radius: 38px; overflow: hidden; min-height: 560px; position: relative; display: flex; flex-direction: column; }
+.notch { width: 96px; height: 26px; border-radius: 20px; background: var(--frame); margin: 10px auto 0; flex: none; }
+
+.lock { background: linear-gradient(160deg, var(--lock-a), var(--lock-b)); color: #fff; padding: 0 12px 22px; }
+.lock .date { text-align: center; margin-top: 22px; font-size: 15px; font-weight: 600; opacity: .9; }
+.lock .time { text-align: center; font-size: 72px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; margin-bottom: 26px; font-variant-numeric: tabular-nums; }
+.notis { display: flex; flex-direction: column; gap: 8px; }
+.noti { background: var(--noti); color: var(--noti-fg); border-radius: 18px; padding: 11px 13px; backdrop-filter: blur(10px); font-size: 13px; line-height: 1.45; animation: rise .6s cubic-bezier(.2,.8,.2,1) both; }
+.noti:nth-child(2) { animation-delay: .12s; } .noti:nth-child(3) { animation-delay: .24s; } .noti:nth-child(4) { animation-delay: .36s; }
+.noti .h { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--fg3); margin-bottom: 2px; }
+.noti .h .k { width: 16px; height: 16px; border-radius: 4px; background: var(--kakao); color: var(--kakao-fg); font-size: 9px; font-weight: 900; display: grid; place-items: center; }
+.noti .h span:last-child { margin-left: auto; }
+.noti b { display: block; font-size: 13.5px; }
+@keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
+
+/* 카카오 알림톡 채팅 */
+.chat { background: var(--chat-bg); padding: 0 12px 18px; }
+.chat .bar { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; padding: 12px 4px 14px; color: var(--fg); }
+.msg { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; }
+.msg .pf { flex: none; width: 34px; height: 34px; border-radius: 13px; background: var(--brand); color: #fff; font-weight: 800; font-size: 14px; display: grid; place-items: center; }
+.msg .col { min-width: 0; flex: 1; }
+.msg .who { font-size: 11.5px; color: var(--fg2); margin-bottom: 4px; }
+.bubble { background: var(--surface); border-radius: 4px 16px 16px 16px; overflow: hidden; font-size: 12.5px; line-height: 1.55; color: var(--fg); }
+.bubble .kh { background: var(--kakao); color: var(--kakao-fg); font-weight: 700; font-size: 12px; padding: 8px 12px; }
+.bubble .bd { padding: 12px 12px 4px; }
+.bubble .bd b { display: block; font-size: 14px; margin-bottom: 6px; }
+.bubble .bd p { margin-bottom: 8px; color: var(--fg2); }
+.bubble .bd p strong { color: var(--fg); }
+.bubble .btn { margin: 4px 12px 12px; padding: 9px; text-align: center; border-radius: 8px; background: var(--bg-alt); font-weight: 600; font-size: 12.5px; color: var(--fg); }
+
+/* 통화 화면 */
+.call { background: linear-gradient(180deg, #2B3340, #11151B); color: #fff; padding: 0 18px 26px; align-items: center; text-align: center; }
+.call .st { margin-top: 44px; font-size: 13px; opacity: .7; }
+.call .nm { font-size: 26px; font-weight: 700; margin-top: 6px; }
+.call .org { font-size: 13px; opacity: .7; }
+.call .memo { margin-top: 28px; background: rgba(255,255,255,.1); border-radius: 16px; padding: 14px; text-align: left; font-size: 12.5px; line-height: 1.6; width: 100%; }
+.call .memo .l { font-size: 11px; opacity: .6; margin-bottom: 4px; }
+.call .memo + .memo { margin-top: 8px; }
+.call .btns { margin-top: auto; display: flex; justify-content: space-around; width: 100%; padding-top: 28px; }
+.call .btns span { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.call .no { background: #F04452; } .call .yes { background: #14A36B; }
+
+/* 상담 전 확인 화면 */
+.check { background: var(--surface); padding: 0 16px 22px; }
+.check .ttl { font-size: 13px; color: var(--fg3); margin-top: 24px; }
+.check h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px; }
+.grade { margin-top: 18px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.grade span { height: 34px; border-radius: 8px; background: var(--before-bg); color: var(--fg3); font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+.grade span.on { background: var(--brand-tint); color: var(--brand); }
+.grade-cap { font-size: 11.5px; color: var(--fg3); margin-top: 6px; display: flex; justify-content: space-between; }
+.ck { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.ck div { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; }
+.ck i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); color: #fff; font-style: normal; font-size: 11px; display: grid; place-items: center; margin-top: 1px; }
+.why { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.why div { display: flex; gap: 10px; align-items: center; }
+.why i { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--brand-tint); color: var(--brand); font-style: normal; font-size: 11.5px; font-weight: 800; display: grid; place-items: center; }
+.why span { font-size: 11.5px; color: var(--fg3); line-height: 1.4; min-width: 0; }
+.why b { display: block; font-size: 13.5px; color: var(--fg); }
+.flag { margin-top: 18px; background: var(--bg-alt); border-radius: 14px; padding: 12px; font-size: 12.5px; color: var(--fg2); }
+.flag s { color: var(--fg3); }
+.flag b { color: var(--fg); }
+
+/* 전/후 비교 */
+.vs .wrap { padding-block: 96px; }
+.sec-h { text-align: center; }
+.sec-h .eb { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 12px; }
+.sec-h h2 { font-size: clamp(30px, 4.6vw, 48px); }
+.sec-h p { margin: 16px auto 0; color: var(--fg2); max-width: 32em; }
+.vs-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.inbox { background: var(--surface); border-radius: var(--r); padding: 26px; min-width: 0; }
+.inbox .lb { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
+.inbox .lb .chip { font-size: 12px; padding: 3px 9px; border-radius: 99px; font-weight: 700; }
+.inbox.b .chip { background: var(--before-bg); color: var(--fg3); }
+.inbox.a .chip { background: var(--brand-tint); color: var(--brand); }
+.inbox .cap { color: var(--fg3); font-size: 14.5px; margin-top: 4px; }
+.inbox ul { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; }
+.inbox li { display: flex; gap: 12px; align-items: center; padding: 13px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.inbox li .ic { flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.inbox.b li { color: var(--fg3); }
+.inbox.b li .ic { background: var(--before-bg); color: var(--before); }
+.inbox.a li .ic { background: var(--brand-tint); color: var(--brand); }
+.inbox li div { min-width: 0; flex: 1; }
+.inbox li small { display: block; font-size: 13px; color: var(--fg3); }
+.inbox li .amt { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 모먼트 */
+.moment .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding-block: 104px; }
+.moment.flip .txt { order: 2; }
+.moment .txt { min-width: 0; }
+.moment .eb { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 14px; }
+.moment h2 { font-size: clamp(30px, 4.4vw, 46px); }
+.pair { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; max-width: 30em; }
+.pair div { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; font-size: 16.5px; }
+.pair span { font-size: 13px; font-weight: 800; text-align: center; padding: 3px 0; border-radius: 99px; margin-top: 2px; }
+.pair .b span { background: var(--before-bg); color: var(--fg3); }
+.pair .b p { color: var(--fg3); }
+.pair .a span { background: var(--brand); color: #fff; }
+.pair .a p { color: var(--fg); font-weight: 500; }
+.note { margin-top: 18px; font-size: 13px; color: var(--fg3); }
+.try { display: inline-block; margin-top: 24px; padding: 13px 20px; border-radius: 14px; background: var(--brand-tint); color: var(--brand); font-weight: 700; font-size: 15.5px; text-decoration: none; }
+.try:hover { background: var(--brand); color: #fff; }
+.end .ctas { margin-top: 32px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.end .ctas a { padding: 16px 24px; border-radius: 16px; font-weight: 700; text-decoration: none; background: var(--brand); color: #fff; }
+.end .ctas a.sub { background: var(--bg-alt); color: var(--fg); }
+
+/* 표 */
+.table .wrap { padding-block: 96px; }
+.tbl-wrap { margin-top: 48px; overflow-x: auto; }
+table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 16px; }
+th, td { text-align: left; padding: 18px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font-size: 14px; color: var(--fg3); font-weight: 700; }
+thead th:last-child { color: var(--brand); }
+tbody th { font-weight: 700; color: var(--fg2); width: 26%; }
+td.b { color: var(--fg3); }
+td.a { font-weight: 700; }
+
+/* 흐름 */
+.how .wrap { padding-block: 96px; }
+.steps { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.step { background: var(--surface); border-radius: var(--r); padding: 24px; min-width: 0; }
+.step .n { font-size: 14px; font-weight: 800; color: var(--brand); }
+.step h3 { font-size: 19px; font-weight: 800; margin-top: 10px; letter-spacing: -0.03em; }
+.step p { font-size: 14.5px; color: var(--fg2); margin-top: 8px; }
+.step.you { background: var(--brand); color: #fff; }
+.step.you .n, .step.you p { color: rgba(255,255,255,.85); }
+
+/* 마무리 */
+.end .wrap { padding-block: 120px 96px; text-align: center; }
+.end h2 { font-size: clamp(34px, 6vw, 60px); }
+.end h2 em { font-style: normal; color: var(--brand); }
+.end p { margin-top: 18px; color: var(--fg2); }
+.foot { border-top: 1px solid var(--line); }
+.foot .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--fg3); line-height: 1.7; }
+.foot b { color: var(--fg2); }
+
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .noti { animation: none; } }
+
+@media (max-width: 860px) {
+  .hero .wrap, .moment .wrap { grid-template-columns: 1fr; gap: 40px; padding-block: 64px; }
+  .moment.flip .txt { order: 0; }
+  .vs-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .vs .wrap, .table .wrap, .how .wrap { padding-block: 72px; }
+}
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .steps { grid-template-columns: 1fr; }
+  .inbox { padding: 20px; }
+  .demo { font-size: 11.5px; }
+}
+</style>
+
+<header class="top band">
+  <div class="wrap">
+    <div class="logo"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#D8201F"/><path d="M8.6 21.6 L13.4 16.4 L17.6 19.4 L23.2 11.2" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.6" cy="21.6" r="3.3" fill="#fff"/><circle cx="23.2" cy="11.2" r="3.6" fill="#fff"/><circle cx="23.2" cy="11.2" r="1.5" fill="#D8201F"/></svg>사이로그</div>
+    <nav class="ed" aria-label="소개 페이지"><span>고객 편</span><a href="pb.html">PB 편</a></nav>
+    <span class="demo">시연용 가상 화면</span>
+    <a class="go-app" href="app.html">서비스 이용하기</a>
+  </div>
+</header>
+
+<section class="hero band">
+  <div class="wrap">
+    <div>
+      <h1>묻기 전에<br><em>먼저 챙겨주는</em><br>증권사</h1>
+      <p class="lead">계좌에서 놓치고 있던 돈과 기한을 담당 PB가 먼저 찾아 알려드려요. 사이로그가 생기면 고객의 1년이 어떻게 달라지는지 보여드릴게요.</p>
+      <div class="persona"><span class="av">홍</span><span><b>홍윤선 님</b> · 가상 고객 · 담당 조은식 PB</span></div>
+    </div>
+    <div class="phone" aria-label="잠금화면에 도착한 알림톡 네 건">
+      <div class="screen lock">
+        <div class="notch"></div>
+        <div class="date">10월 29일 목요일</div>
+        <div class="time">9:41</div>
+        <div class="notis">
+          <div class="noti"><div class="h"><span class="k">K</span><span>카카오톡 · 유진투자증권</span><span>지금</span></div><b>쉬고 있는 예수금이 있어요</b>1,240만원이 47일째 그대로예요</div>
+          <div class="noti"><div class="h"><span class="k">K</span><span>카카오톡 · 유진투자증권</span><span>지금</span></div><b>해외주식 양도세, 연말 전에 확인하세요</b>올해 실현손익 412만원</div>
+          <div class="noti"><div class="h"><span class="k">K</span><span>카카오톡 · 유진투자증권</span><span>어제</span></div><b>올해 세액공제 한도가 남아 있어요</b>연금저축 300만원 여유</div>
+          <div class="noti"><div class="h"><span class="k">K</span><span>카카오톡 · 유진투자증권</span><span>어제</span></div><b>만기가 다가오고 있어요</b>ELB 3,000만원 · 11월 5일</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="vs band alt">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">같은 고객, 같은 계좌</div>
+      <h2>받는 메시지부터 달라져요</h2>
+      <p>지금까지는 모두에게 같은 문자가 왔어요. 이제는 내 계좌의 금액과 날짜가 담긴 안내가 와요.</p>
+    </div>
+    <div class="vs-grid">
+      <div class="inbox b">
+        <div class="lb">사이로그 전 <span class="chip">모두에게 같은 문자</span></div>
+        <div class="cap">내 계좌 이야기는 없었어요</div>
+        <ul>
+          <li><span class="ic">광고</span><div>11월 투자 세미나 안내<small>전체 고객 발송</small></div></li>
+          <li><span class="ic">시황</span><div>오늘의 증시 마감 브리핑<small>전체 고객 발송</small></div></li>
+          <li><span class="ic">이벤트</span><div>해외주식 수수료 우대 이벤트<small>전체 고객 발송</small></div></li>
+          <li><span class="ic">공지</span><div>주말 시스템 점검 안내<small>전체 고객 발송</small></div></li>
+        </ul>
+      </div>
+      <div class="inbox a">
+        <div class="lb">사이로그 후 <span class="chip">내 계좌 기준</span></div>
+        <div class="cap">기한 전에, 내 숫자로 와요</div>
+        <ul>
+          <li><span class="ic">CMA</span><div>쉬고 있는 예수금<small>47일째 그대로</small></div><span class="amt">1,240만원</span></li>
+          <li><span class="ic">세금</span><div>해외주식 올해 실현손익<small>12월 결제분까지 올해 기준</small></div><span class="amt">412만원</span></li>
+          <li><span class="ic">연금</span><div>세액공제 한도 여유<small>연금저축 300 / 600만원 납입</small></div><span class="amt">300만원</span></li>
+          <li><span class="ic">만기</span><div>ELB 만기 D-7<small>11월 5일 예수금 입금 예정</small></div><span class="amt">3,000만원</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band" id="idle">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">쉬는 돈</div>
+      <h2>잠자던 예수금,<br>이제 먼저 알려드려요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>예수금 1,240만원이 47일째 그대로였어요. 아무도 말해주지 않았어요.</p></div>
+        <div class="a"><span>후</span><p>CMA로 옮기면 1년에 얼마를 더 받는지 내 금액으로 계산해서 알려드려요. 입출금은 지금처럼 자유로워요.</p></div>
+      </div>
+      <p class="note">CMA 금리 연 2.75% 기준 시연용 계산입니다.</p>
+      <a class="try" href="customer.html#cma" target="_blank" rel="noopener">알림톡부터 CMA 가입까지 눌러보기 →</a>
+    </div>
+    <div class="phone" aria-label="CMA 전환 안내 알림톡">
+      <div class="screen chat">
+        <div class="notch"></div>
+        <div class="bar">‹ 유진투자증권</div>
+        <div class="msg"><span class="pf">유</span><div class="col"><div class="who">유진투자증권</div>
+          <div class="bubble"><div class="kh">알림톡 도착</div>
+            <div class="bd"><b>쉬고 있는 예수금이 있어요</b>
+              <p>홍윤선 고객님, 계좌의 예수금 <strong>1,240만원</strong>이 <strong>47일째</strong> 그대로예요.</p>
+              <p>같은 돈을 CMA 계좌에 두면 연 2.75% 기준으로 1년에 약 <strong>34만원</strong>을 더 받을 수 있어요. 입출금은 지금처럼 자유롭습니다.</p>
+              <p>담당 PB 조은식이 전환 절차를 도와드릴게요.</p></div>
+            <div class="btn">담당 PB와 상담하기</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band alt flip" id="tax">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">세금</div>
+      <h2>세금은 신고할 때 말고<br>연말 전에 알아야 하니까</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>해외주식 양도세는 다음 해 5월 신고 안내를 받고서야 알았어요. 연금저축 한도가 남은 건 해가 바뀐 뒤에 알았고요.</p></div>
+        <div class="a"><span>후</span><p>12월 결제분까지가 올해 기준이라는 것, 기본공제 250만원, 남은 세액공제 한도를 내 계좌 숫자로 미리 받아요.</p></div>
+      </div>
+      <p class="note">세율·공제 한도는 시연용 기준이며, 실제 절세 효과는 담당 PB·세무 상담으로 확인합니다.</p>
+    </div>
+    <div class="phone" aria-label="양도세와 세액공제 안내 알림톡">
+      <div class="screen chat">
+        <div class="notch"></div>
+        <div class="bar">‹ 유진투자증권</div>
+        <div class="msg"><span class="pf">유</span><div class="col"><div class="who">유진투자증권</div>
+          <div class="bubble"><div class="kh">알림톡 도착</div>
+            <div class="bd"><b>해외주식 양도세, 연말 전에 확인하세요</b>
+              <p>홍윤선 고객님, 올해 해외주식 실현손익은 <strong>412만원</strong>입니다.</p>
+              <p>매년 250만원까지 기본공제되고, 같은 해의 이익과 손실은 합산돼요. 12월 결제분까지 올해 기준입니다.</p></div>
+            <div class="btn">담당 PB와 상담하기</div></div>
+        </div></div>
+        <div class="msg"><span class="pf">유</span><div class="col">
+          <div class="bubble"><div class="kh">알림톡 도착</div>
+            <div class="bd"><b>올해 세액공제 한도가 남아 있어요</b>
+              <p>연금저축 올해 납입액 <strong>300만원</strong>, 한도 600만원까지 <strong>300만원</strong> 여유가 있어요. 연말 전에 납입하면 최대 <strong>39만 6천원</strong>(13.2% 기준)을 돌려받을 수 있어요.</p></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band" id="maturity">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">만기</div>
+      <h2>만기된 돈이<br>멈춰 있지 않게</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>ELB 만기금 3,000만원이 2주 넘게 예수금으로 대기했어요. 만기일을 따로 메모해 둬야 했어요.</p></div>
+        <div class="a"><span>후</span><p>만기 7일 전에 미리 알려드려요. 다음 운용 방향은 만기 전에 PB와 상의해 둘 수 있어요.</p></div>
+      </div>
+    </div>
+    <div class="phone" aria-label="만기 안내 알림톡">
+      <div class="screen chat">
+        <div class="notch"></div>
+        <div class="bar">‹ 유진투자증권</div>
+        <div class="msg"><span class="pf">유</span><div class="col"><div class="who">유진투자증권</div>
+          <div class="bubble"><div class="kh">알림톡 도착</div>
+            <div class="bd"><b>만기가 다가오고 있어요</b>
+              <p>홍윤선 고객님, 보유하신 ELB가 <strong>11월 5일</strong>에 만기됩니다.</p>
+              <p>만기 금액 <strong>3,000만원</strong>은 예수금으로 입금되며, 별도 지시가 없으면 그대로 대기하게 돼요.</p>
+              <p>다음 운용 방향을 담당 PB와 미리 상의해 두시면 자금이 쉬는 기간을 줄일 수 있습니다.</p></div>
+            <div class="btn">담당 PB와 상담하기</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band alt flip" id="consult">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">상담</div>
+      <h2>지난번에 한 얘기,<br>다시 안 해도 돼요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>전화할 때마다 내 상황을 처음부터 설명했어요. "다음 주에 연락드릴게요"는 잊히기도 했고요.</p></div>
+        <div class="a"><span>후</span><p>통화 내용이 요약되고 약속은 PB 일정에 자동으로 들어가요. 상담 전날에는 고객님께도 알림톡으로 일정과 이야기할 내용을 미리 알려드려요.</p></div>
+      </div>
+      <a class="try" href="customer.html#call" target="_blank" rel="noopener">상담 전날 알림 눌러보기 →</a>
+    </div>
+    <div class="phone" aria-label="상담 전날 고객에게 가는 알림톡">
+      <div class="screen chat">
+        <div class="notch"></div>
+        <div class="bar">‹ 유진투자증권</div>
+        <div class="msg"><span class="pf">유</span><div class="col"><div class="who">유진투자증권 · 11월 2일 오후 6:00</div>
+          <div class="bubble"><div class="kh">알림톡 도착</div>
+            <div class="bd"><b>내일 상담 일정이 있어요</b>
+              <p>홍윤선 고객님, 지난 10월 15일 통화에서 약속드린 상담 일정을 알려드려요.</p>
+              <p><strong>11월 3일 (화) 오후 2:00</strong> · 전화 · 조은식 PB</p>
+              <p>이번에는 <strong>11월 5일 만기되는 ELB 3,000만원</strong>을 어떻게 운용할지 이야기 나눌 예정이에요.</p></div>
+            <div class="btn">상담 내용 미리 보기</div>
+            <div class="btn" style="margin-top:-6px">시간 바꾸기</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band" id="trust">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">안심</div>
+      <h2>나를 알고 하는 설명,<br>과장 없이</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>누구에게나 같은 상품 소개를 들었어요. 그게 왜 나한테 맞는지는 알기 어려웠어요.</p></div>
+        <div class="a"><span>후</span><p>내가 관심 있던 분야, 돈이 필요한 시기에 맞는 상품 정보만 받아요. 왜 나에게 안내하는지도 함께 적혀 있어요.</p></div>
+        <div class="a"><span>후</span><p>내 투자성향으로 가입할 수 있는 상품만 안내하고, 위험등급과 비용, 원금 손실 가능성을 먼저 보여드려요.</p></div>
+      </div>
+      <p class="note">가입 버튼 대신 투자설명서와 PB 상담으로 이어져요. 어떤 상품을 고를지는 언제나 고객님이 결정합니다.</p>
+    </div>
+    <div class="phone" aria-label="고객이 받는 펀드 정보 안내 메시지">
+      <div class="screen chat">
+        <div class="notch"></div>
+        <div class="bar">‹ 유진투자증권</div>
+        <div class="msg"><span class="pf">유</span><div class="col"><div class="who">유진투자증권</div>
+          <div class="bubble"><div class="kh">친구톡 · 광고</div>
+            <div class="bd"><b>(광고) 초단기채 증권투자신탁 상품 정보</b>
+              <p>홍윤선 고객님, 평소 관심 두신 채권·이자 분야와 관련된 공모펀드 정보를 전해 드려요.</p>
+              <div class="reason"><span>안내드리는 이유</span>지난 통화에서 말씀하신 2027년 2월 자금 일정과 기간이 맞아요.</div>
+              <div class="box">
+                <div><span>위험등급</span><b>6등급 매우 낮은 위험</b></div>
+                <div><span>내 투자성향</span><b class="ok">안정추구형 · 가입 가능</b></div>
+                <div><span>총보수</span><b>연 0.18%</b></div>
+              </div>
+              <p class="ntc">예금자보호 대상이 아니며 원금 손실이 발생할 수 있어요. 과거 수익률은 미래를 보장하지 않아요. 시연용 가상 펀드입니다.</p></div>
+            <div class="btn">투자설명서 보기</div>
+            <div class="btn" style="margin-top:-6px">PB 상담 요청</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="table band alt">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">한눈에 보기</div>
+      <h2>고객에게 무엇이 달라지나요</h2>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>사이로그 전</th><th>사이로그 후</th></tr></thead>
+        <tbody>
+          <tr><th>알게 되는 때</th><td class="b">기한이 지난 뒤</td><td class="a">기한 전에</td></tr>
+          <tr><th>먼저 연락하는 사람</th><td class="b">고객</td><td class="a">담당 PB</td></tr>
+          <tr><th>받는 안내</th><td class="b">모두에게 같은 문자</td><td class="a">내 계좌의 금액과 날짜</td></tr>
+          <tr><th>상담할 때</th><td class="b">매번 처음부터 설명</td><td class="a">지난 상담에서 이어서</td></tr>
+          <tr><th>상품 설명</th><td class="b">누구에게나 같은 상품 소개</td><td class="a">내 관심사와 자금 일정에 맞는 정보만, 투자성향 안에서</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="how band">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">어떻게 가능한가요</div>
+      <h2>고객님이 따로 할 일은 없어요</h2>
+      <p>계좌에 남는 기록에서 신호를 찾고, 사람이 확인한 뒤에 연락드려요.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>계좌 기록 읽기</h3><p>예수금, 체결, 입출금, 만기일, 세금 기준일을 매일 살펴요.</p></div>
+      <div class="step"><div class="n">2</div><h3>챙길 일 찾기</h3><p>쉬는 돈, 다가오는 기한, 남은 공제 한도를 신호로 만들어요.</p></div>
+      <div class="step"><div class="n">3</div><h3>담당 PB 확인</h3><p>PB가 내용을 확인하고 알림톡이나 전화로 안내해요.</p></div>
+      <div class="step you"><div class="n">4</div><h3>결정은 고객님이</h3><p>필요한 정보를 받고, 원하실 때 상담을 이어가요.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="end band">
+  <div class="wrap">
+    <h2>고객이 묻기 전에,<br><em>사이로그가 먼저.</em></h2>
+    <p>유진투자증권 PB와 고객을 잇는 계좌 로그 서비스</p>
+    <div class="ctas flow">
+      <a href="pb.html">PB에게는 어떻게 달라질까요? PB 편 보기 →</a>
+      <a class="sub" href="app.html">바로 서비스 이용하기</a>
+    </div>
+    <div class="ctas embed-only">
+      <a href="customer.html#cma" target="_blank" rel="noopener">고객 화면 체험하기</a>
+      <a class="sub" href="customer.html#call" target="_blank" rel="noopener">상담 전날 알림 보기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot band">
+  <div class="wrap">
+    <b>시연용 가상 화면입니다.</b> 홍윤선 님은 가상 고객이며 화면의 금액·날짜·통화 내용은 모두 시연을 위해 만든 값입니다. 이 페이지는 특정 상품이나 종목의 매매를 권유하지 않으며 수익을 보장하지 않습니다. CMA 금리, 세율, 공제 한도는 시연용 가정으로 실제와 다를 수 있습니다.
+  </div>
+</footer>
+
+<style>
+/* PB 워크스페이스(index.html · cx.js) 안에 ?embed 로 들어왔을 때: 상단 바는 바깥 화면과 겹치므로 숨김 */
+.embed .top, .embed body::before, .embed .ctas.flow { display: none; }
+.ctas.embed-only { display: none; }
+.embed .ctas.embed-only { display: flex; }
+/* 소개 → 플랫폼 흐름 버튼 */
+.go-app { margin-left: 8px; padding: 7px 14px; border-radius: 10px; background: var(--brand); color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+@media (max-width: 480px) { .go-app { margin-left: 4px; padding: 6px 10px; font-size: 12px; } }
+/* 안심 섹션: 고객이 받는 펀드 정보 메시지 */
+.bubble .bd .reason { background: var(--brand-tint); border-radius: 10px; padding: 9px 11px; margin-bottom: 10px; font-size: 12px; color: var(--fg); line-height: 1.5; }
+.bubble .bd .reason span { display: block; font-size: 11px; font-weight: 700; color: var(--brand); margin-bottom: 2px; }
+.bubble .bd .box { background: var(--bg-alt); border-radius: 10px; padding: 9px 11px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--fg2); }
+.bubble .bd .box div { display: flex; justify-content: space-between; gap: 8px; }
+.bubble .bd .box b { color: var(--fg); text-align: right; }
+.bubble .bd .box b.ok { color: var(--brand); }
+.bubble .bd .ntc { font-size: 10.5px; color: var(--fg3); line-height: 1.5; }
+</style>
+<script>
+/* 다른 페이지(PB 편)에서 넘어오면 이전 스크롤 위치가 이어지지 않고 맨 위에서 시작 (#섹션 바로가기는 예외) */
+(() => {
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  const top = () => { if (!location.hash) window.scrollTo(0, 0); };
+  top(); addEventListener('load', () => { top(); setTimeout(top, 60); });
+})();
+</script>
+<script>
+(() => {
+  if (!new URLSearchParams(window.__SAILOG_QS || location.search).has('embed') || window.parent === window) return;
+  document.documentElement.classList.add('embed');
+  // 고객 화면 링크는 새 탭 대신 워크스페이스의 '고객 화면' 탭을 바꾼다
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="customer.html"]');
+    if (!a) return;
+    e.preventDefault();
+    parent.postMessage({ sailogCx: a.hash.slice(1) }, '*');
+  });
+})();
+</script>

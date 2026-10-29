@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사이로그 알림톡</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="styles.css">
+<style>
+.page { max-width: 1100px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right, 0px)) 60px max(16px, env(safe-area-inset-left, 0px)); }
+.head { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+.head h1 { font-size: 24px; font-weight: 800; }
+.head p { color: var(--fg2); }
+.head a { color: var(--fg2); font-size: 13px; text-decoration: none; margin-left: auto; font-weight: 600; }
+.grid { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; align-items: start; }
+.panel { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; }
+.panel h3 { font-size: 13px; color: var(--fg3); font-weight: 700; margin-bottom: 10px; }
+.tpl-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; text-align: left; margin-bottom: 4px; }
+.tpl-btn:hover { background: var(--surface2); }
+.tpl-btn.active { background: var(--brand-tint); }
+.tpl-btn .em { font-size: 20px; width: 28px; text-align: center; }
+.tpl-btn b { display: block; font-size: 14px; }
+.tpl-btn span { font-size: 12px; color: var(--fg3); }
+.tpl-btn.active b { color: var(--brand); }
+.cust-sel { width: 100%; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 10px; margin-bottom: 12px; }
+.basis { font-size: 13px; line-height: 1.6; color: var(--fg2); }
+.basis .row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--surface2); }
+.basis .row:last-child { border-bottom: 0; }
+.basis .row b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.note { margin-top: 14px; padding: 12px; background: var(--surface2); border-radius: 10px; font-size: 12px; color: var(--fg3); line-height: 1.5; }
+.flow { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.flow .step { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: var(--fg2); }
+.flow .step > div { flex: 1; min-width: 0; line-height: 1.5; }
+.flow i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); color: #fff; font-style: normal; font-size: 11px; font-weight: 700; display: grid; place-items: center; margin-top: 1px; }
+@media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <div><h1>고객 알림톡 예시</h1><p>사이로그가 계좌 로그에서 찾은 혜택을 카카오 알림톡으로 고객에게 전달하는 화면입니다.</p></div>
+    <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
+    <a href="index.html">PB 화면으로 →</a>
+  </div>
+  <div class="grid">
+    <div class="panel">
+      <h3>알림 유형</h3>
+      <div id="tpls"></div>
+    </div>
+    <div id="phone"></div>
+    <div class="panel">
+      <h3>받는 고객</h3>
+      <select class="cust-sel" id="cust"></select>
+      <h3>메시지가 만들어진 근거 (계좌 로그)</h3>
+      <div class="basis" id="basis"></div>
+      <div class="flow" id="flow"></div>
+      <div class="note">알림톡은 정보 안내와 상담 연결만 담고, 특정 종목의 매매 권유 표현은 넣지 않습니다. 시세·수익률은 <span id="market-note">시세 API 연동 전 임시값</span>입니다.</div>
+    </div>
+  </div>
+</div>
+<script src="market.js"></script> <!-- market/collect.ps1 생성물. 없으면 data.js 임시값 사용 -->
+<script src="data.js"></script>
+<script src="ui.js"></script>
+<script>
+(() => {
+  const M = SAILOG.MARKET, el = document.getElementById('market-note');
+  if (el && M.live) el.textContent = `${M.asOf.slice(0, 16).replace('T', ' ')} 기준 실제 시세(KR 네이버금융 · US yfinance)`;
+})();
+</script>
+<script>
+(() => {
+  const { CUSTOMERS, TEMPLATES, won, pct, byId } = SAILOG;
+  const $ = (s) => document.querySelector(s);
+  const esc = UI.esc;
+  const keys = Object.keys(TEMPLATES);
+  const recommended = (k) => CUSTOMERS.filter(c => c.signals.some(s => s.template === k));
+  let tpl = 'cma', cid = recommended('cma')[0].id;
+
+  function render() {
+    $('#tpls').innerHTML = keys.map(k => `<button class="tpl-btn ${k === tpl ? 'active' : ''}" data-k="${k}"><span class="em">${TEMPLATES[k].emoji}</span><div><b>${esc(TEMPLATES[k].name)}</b><span>해당 고객 ${recommended(k).length}명</span></div></button>`).join('');
+    document.querySelectorAll('.tpl-btn').forEach(b => b.onclick = () => { tpl = b.dataset.k; const r = recommended(tpl); if (!r.some(c => c.id === cid)) cid = r[0].id; render(); });
+    const list = recommended(tpl);
+    $('#cust').innerHTML = list.map(c => `<option value="${c.id}" ${c.id === cid ? 'selected' : ''}>${esc(c.name)} (${c.risk})</option>`).join('');
+    $('#cust').onchange = (e) => { cid = Number(e.target.value); render(); };
+    const c = byId(cid);
+    $('#phone').innerHTML = UI.phoneHTML(UI.alimtalkHTML(c, tpl));
+    const sig = c.signals.find(s => s.template === tpl);
+    const rows = [['예수금', `${won(c.cash)} · ${c.idle}일 미운용`], ['총자산', won(c.total)], ['평가손익', `${won(c.pnl)}`]];
+    if (sig && sig.stock) rows.push([sig.stock.name, `${pct(sig.stock.chg)} · ${won(sig.stock.pnl)}`]);
+    c.events.forEach(e => { if (e.t === 'TAX') rows.push(['해외주식 올해 실현손익', won(e.realized)]); if (e.t === 'MATURITY') rows.push([e.product, `${won(e.amount)} · ${e.date}`]); if (e.t === 'PENSION') rows.push([e.product + ' 납입', `${won(e.paid)} / ${won(e.limit)}`]); if (e.t === 'LARGE_IN') rows.push(['입금', `${won(e.amount)} · ${e.date}`]); if (e.t === 'ISA_MATURITY') rows.push(['ISA 만기', e.date]); if (e.t === 'ISA_LIMIT') rows.push(['ISA 잔여 한도', won(e.remain)]); });
+    $('#basis').innerHTML = rows.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    $('#flow').innerHTML = [['원장·시세 로그 수집', '예수금 잔고, 체결, 입출금, 보유 종목 시세'], ['신호 감지', sig ? sig.label + ' · ' + sig.why : '정기 발송 (주간)'], ['메시지 생성', '고객 이름·금액·날짜를 템플릿에 채움'], ['PB 확인 후 발송', '사이로그 PB 화면에서 미리보기 → 발송']].map(([t, d], i) => `<div class="step"><i>${i + 1}</i><div><b>${esc(t)}</b><br>${esc(d)}</div></div>`).join('');
+  }
+  render();
+})();
+</script>
+</body>
+</html>

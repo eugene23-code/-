@@ -1,0 +1,590 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>사이로그 PB 경험</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<style>
+/* 고객 편(landing.html)과 같은 토스식 원 메시지 섹션. 폰 대신 PB 워크스페이스 창 목업 */
+:root {
+  --brand: #D8201F;
+  --brand-tint: #FDECEC;
+  --bg: #FFFFFF;
+  --bg-alt: #F2F4F6;
+  --surface: #FFFFFF;
+  --surface2: #F7F8FA;
+  --fg: #191F28;
+  --fg2: #4E5968;
+  --fg3: #8B95A1;
+  --line: #E5E8EB;
+  --before-bg: #E9ECEF;
+  --amber: #E8930C;
+  --amber-tint: #FFF3DC;
+  --green: #14A36B;
+  --green-tint: #E3F6EE;
+  --win-shadow: 0 30px 60px -24px rgba(25,31,40,.28), 0 0 0 1px rgba(25,31,40,.06);
+  --font: 'Pretendard', 'Noto Sans KR', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --r: 22px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #FF4D4A; --brand-tint: #3A1C1E;
+    --bg: #101317; --bg-alt: #181C21; --surface: #1F242B; --surface2: #262C34;
+    --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2F363E;
+    --before-bg: #252A31;
+    --amber: #F5A93A; --amber-tint: #3A2E17; --green: #2FC48A; --green-tint: #173328;
+    --win-shadow: 0 30px 60px -24px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #FF4D4A; --brand-tint: #3A1C1E;
+  --bg: #101317; --bg-alt: #181C21; --surface: #1F242B; --surface2: #262C34;
+  --fg: #F2F4F6; --fg2: #B0B8C1; --fg3: #7E8894; --line: #2F363E;
+  --before-bg: #252A31;
+  --amber: #F5A93A; --amber-tint: #3A2E17; --green: #2FC48A; --green-tint: #173328;
+  --win-shadow: 0 30px 60px -24px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 17px; line-height: 1.6; letter-spacing: -0.02em; word-break: keep-all; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; }
+h1, h2 { text-wrap: balance; font-weight: 800; letter-spacing: -0.035em; line-height: 1.25; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+.band { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.band.alt { background: var(--bg-alt); }
+.wrap { max-width: 1080px; margin: 0 auto; }
+
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--bg); }
+.top .wrap { display: flex; align-items: center; gap: 10px; height: 60px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
+.logo i { width: 26px; height: 26px; border-radius: 8px; background: var(--brand); color: #fff; font-style: normal; font-size: 14px; display: grid; place-items: center; }
+.ed { margin-left: 6px; display: flex; gap: 2px; background: var(--bg-alt); padding: 3px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+.ed a, .ed span { padding: 4px 10px; border-radius: 8px; text-decoration: none; color: var(--fg3); }
+.ed span { background: var(--surface); color: var(--fg); }
+.demo { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--brand); background: var(--brand-tint); padding: 5px 10px; border-radius: 99px; white-space: nowrap; }
+
+/* 히어로 */
+.hero .wrap { padding-block: 72px 88px; display: grid; grid-template-columns: .95fr 1.05fr; gap: 48px; align-items: center; }
+.hero h1 { font-size: clamp(34px, 4.6vw, 52px); }
+.hero h1 em { font-style: normal; color: var(--brand); }
+.hero .lead { margin-top: 22px; font-size: clamp(17px, 2vw, 20px); color: var(--fg2); max-width: 28em; }
+.persona { margin-top: 28px; display: inline-flex; align-items: center; gap: 12px; padding: 10px 16px 10px 10px; border-radius: 99px; background: var(--bg-alt); font-size: 14.5px; color: var(--fg2); }
+.persona b { color: var(--fg); }
+.persona .av { width: 34px; height: 34px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 800; color: var(--brand); border: 1px solid var(--line); }
+
+/* 워크스페이스 창 목업 */
+.win { background: var(--surface); border-radius: 18px; box-shadow: var(--win-shadow); overflow: hidden; min-width: 0; font-size: 13.5px; line-height: 1.5; }
+.win-bar { display: flex; align-items: center; gap: 6px; padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--surface2); }
+.win-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.win-bar span { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--fg3); }
+.win-body { padding: 18px; }
+.greet b { display: block; font-size: 18px; letter-spacing: -0.03em; }
+.greet span { color: var(--fg2); font-size: 13px; }
+.prog { margin-top: 10px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--fg3); font-weight: 700; }
+.prog div { flex: 1; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.prog div i { display: block; height: 100%; width: 27%; background: var(--brand); border-radius: 99px; }
+.tasks { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.task { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 11px 12px; border-radius: 12px; background: var(--surface2); animation: rise .5s cubic-bezier(.2,.8,.2,1) both; }
+.task:nth-child(2) { animation-delay: .08s; } .task:nth-child(3) { animation-delay: .16s; } .task:nth-child(4) { animation-delay: .24s; } .task:nth-child(5) { animation-delay: .32s; }
+.task > div { min-width: 0; }
+.task b { font-size: 13.5px; }
+.task small { display: block; color: var(--fg3); font-size: 12px; }
+.task .go { font-size: 12px; font-weight: 700; color: var(--brand); white-space: nowrap; }
+.pri { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+.pri.p3 { background: var(--brand); color: #fff; }
+.pri.p2 { background: var(--amber-tint); color: var(--amber); }
+.pri.p1 { background: var(--before-bg); color: var(--fg2); }
+@keyframes rise { from { transform: translateY(10px); } to { transform: none; } }
+
+/* 하루 비교 */
+.day .wrap { padding-block: 96px; }
+.sec-h { text-align: center; }
+.sec-h .eb { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 12px; }
+.sec-h h2 { font-size: clamp(30px, 4.6vw, 48px); }
+.sec-h p { margin: 16px auto 0; color: var(--fg2); max-width: 32em; }
+.days { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.tl { background: var(--surface); border-radius: var(--r); padding: 26px; min-width: 0; }
+.tl .lb { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; margin-bottom: 8px; }
+.tl .chip { font-size: 12px; padding: 3px 9px; border-radius: 99px; font-weight: 700; }
+.tl.b .chip { background: var(--before-bg); color: var(--fg3); }
+.tl.a .chip { background: var(--brand-tint); color: var(--brand); }
+.tl ol { list-style: none; margin: 0; padding: 0; }
+.tl li { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+.tl li time { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--fg3); }
+.tl.b li span { color: var(--fg3); }
+.tl.a li time { color: var(--brand); }
+.foot-note { margin-top: 16px; text-align: center; font-size: 13px; color: var(--fg3); }
+
+/* 모먼트 */
+.moment .wrap { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: center; padding-block: 104px; }
+.moment.flip .wrap { grid-template-columns: 1.1fr .9fr; }
+.moment.flip .txt { order: 2; }
+.moment .txt { min-width: 0; }
+.moment .eb { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 14px; }
+.moment h2 { font-size: clamp(30px, 4.2vw, 44px); }
+.pair { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; max-width: 30em; }
+.pair div { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; font-size: 16.5px; }
+.pair span { font-size: 13px; font-weight: 800; text-align: center; padding: 3px 0; border-radius: 99px; margin-top: 2px; }
+.pair .b span { background: var(--before-bg); color: var(--fg3); }
+.pair .b p { color: var(--fg3); }
+.pair .a span { background: var(--brand); color: #fff; }
+.pair .a p { color: var(--fg); font-weight: 500; }
+.note { margin-top: 18px; font-size: 13px; color: var(--fg3); }
+
+/* 계좌 점검 창 */
+.calc { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 30em; }
+.calc div { background: var(--bg-alt); border-radius: 16px; padding: 14px 16px; min-width: 0; }
+.calc small { display: block; font-size: 12.5px; color: var(--fg3); font-weight: 700; }
+.calc b { display: block; font-size: 20px; letter-spacing: -0.03em; margin-top: 2px; color: var(--fg3); }
+.calc span { font-size: 13.5px; color: var(--fg3); }
+.calc .on { background: var(--brand-tint); }
+.calc .on small, .calc .on b { color: var(--brand); }
+.calc .on span { color: var(--fg2); }
+.scan-h b { display: block; font-size: 16px; }
+.scan-h small { color: var(--fg3); font-size: 12px; }
+.tiles { margin-top: 14px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+.tiles i { aspect-ratio: 1; max-width: 100%; border-radius: 8px; background: var(--surface2); box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; font-style: normal; font-size: 11px; font-weight: 800; color: #fff; }
+.tiles .t3, .legend .t3 { background: var(--brand); box-shadow: none; }
+.tiles .t2, .legend .t2 { background: var(--amber); box-shadow: none; }
+.tiles .t1, .legend .t1 { background: var(--before-bg); box-shadow: none; }
+.legend { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--fg2); }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--surface2); box-shadow: inset 0 0 0 1px var(--line); }
+.legend b { color: var(--fg); font-variant-numeric: tabular-nums; }
+
+/* 고객 분석 창 */
+.who-h { display: flex; align-items: center; gap: 10px; }
+.who-h .av { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--brand-tint); color: var(--brand); font-weight: 800; display: grid; place-items: center; }
+.who-h b { font-size: 16px; display: block; }
+.who-h small { color: var(--fg3); font-size: 12px; }
+.mem { display: flex; flex-direction: column; border-left: 2px solid var(--line); margin-left: 4px; }
+.mem div { display: grid; grid-template-columns: 44px 1fr; gap: 8px; padding: 5px 0 5px 12px; position: relative; color: var(--fg2); }
+.mem div::before { content: ""; position: absolute; left: -6px; top: 11px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--brand); }
+.mem time { font-weight: 800; color: var(--fg3); font-size: 12px; font-variant-numeric: tabular-nums; padding-top: 1px; }
+.mem b { color: var(--fg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: var(--surface2); color: var(--fg2); }
+.sug { display: flex; flex-direction: column; gap: 6px; }
+.sug div { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--brand-tint); }
+.sug i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); color: #fff; font-style: normal; font-size: 11px; font-weight: 800; display: grid; place-items: center; margin-top: 1px; }
+.sug span { min-width: 0; }
+.sug b { font-size: 13.5px; display: block; }
+.sug small { font-size: 11.5px; color: var(--fg2); }
+
+/* 알림톡 창 */
+.tpls { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpls span { padding: 6px 10px; border-radius: 10px; background: var(--surface2); font-size: 12.5px; font-weight: 600; color: var(--fg2); }
+.tpls span.on { background: var(--brand-tint); color: var(--brand); box-shadow: inset 0 0 0 1.5px var(--brand); }
+.split { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.split > div { min-width: 0; }
+.mini-h { font-size: 12px; font-weight: 700; color: var(--fg3); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.rcp { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+.rcp .ck { flex: none; width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--line); }
+.rcp .ck.on { background: var(--brand); border-color: var(--brand); }
+.rcp div { min-width: 0; }
+.rcp b { font-size: 13px; }
+.rcp small { display: block; font-size: 11.5px; color: var(--fg3); }
+.pv { background: var(--surface2); border-radius: 12px; padding: 12px; font-size: 12.5px; color: var(--fg2); }
+.pv b { display: block; color: var(--fg); margin-bottom: 4px; }
+.pv mark { background: var(--brand-tint); color: var(--brand); font-weight: 700; padding: 0 3px; border-radius: 4px; }
+.send { margin-top: 12px; text-align: center; padding: 10px; border-radius: 10px; background: var(--brand); color: #fff; font-weight: 700; font-size: 13px; }
+
+/* 통화 요약 창 */
+.sum-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sum-h b { font-size: 16px; }
+.sum-h small { color: var(--fg3); font-size: 12px; }
+.blk { margin-top: 14px; }
+.blk ul { margin: 0; padding-left: 18px; color: var(--fg2); display: flex; flex-direction: column; gap: 4px; }
+.ev { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--green-tint); color: var(--fg); margin-top: 6px; }
+.ev i { font-style: normal; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 12px; display: grid; place-items: center; }
+.ev small { display: block; color: var(--fg2); font-size: 11.5px; }
+.cp { margin-top: 6px; padding: 10px 12px; border-radius: 12px; background: var(--amber-tint); font-size: 12.5px; color: var(--fg2); }
+.cp b { color: var(--amber); }
+.cp s { color: var(--fg3); }
+
+/* 펀드 매칭 창 */
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--fg3); }
+.meta b { color: var(--fg); }
+.wts { display: flex; height: 8px; border-radius: 99px; overflow: hidden; margin-top: 12px; gap: 2px; }
+.wts i { display: block; background: var(--brand); }
+.wts i:nth-child(2) { opacity: .75; } .wts i:nth-child(3) { opacity: .55; } .wts i:nth-child(4) { opacity: .4; } .wts i:nth-child(5) { opacity: .25; }
+.wts-cap { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--fg3); margin-top: 6px; }
+.fd { display: grid; grid-template-columns: 26px 1fr 56px; gap: 10px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+.fd:first-of-type { margin-top: 12px; }
+.fd .rk { width: 26px; height: 26px; border-radius: 8px; background: var(--fg); color: var(--surface); font-weight: 800; font-size: 12px; display: grid; place-items: center; }
+.fd > div { min-width: 0; }
+.fd b { font-size: 13.5px; }
+.fd small { display: block; font-size: 11.5px; color: var(--fg3); }
+.fd .why { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.fd .why span { font-size: 11px; padding: 2px 7px; border-radius: 6px; background: var(--surface2); color: var(--fg2); }
+.fd .m { text-align: right; font-weight: 800; color: var(--brand); font-variant-numeric: tabular-nums; }
+.fd .m small { font-weight: 500; }
+
+/* 대주주 창 */
+.rule { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rule div { background: var(--surface2); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.rule small { display: block; font-size: 11.5px; color: var(--fg3); }
+.rule b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.mj { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.mj > div { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface2); }
+.mj b { font-size: 13.5px; }
+.mj small { display: block; font-size: 11.5px; color: var(--fg3); }
+.gauge { grid-column: 1 / -1; height: 6px; border-radius: 99px; background: var(--line); position: relative; }
+.gauge i { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: var(--amber); }
+.gauge.over i { background: var(--brand); }
+.gauge::after { content: ""; position: absolute; top: -3px; bottom: -3px; left: 80%; width: 2px; background: var(--fg); }
+
+/* 연결 */
+.link .wrap { padding-block: 96px; }
+.chain { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.lk { background: var(--surface); border-radius: var(--r); padding: 24px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.lk .who { font-size: 12.5px; font-weight: 800; }
+.lk .pb .who { color: var(--fg3); }
+.lk .cu .who { color: var(--brand); }
+.lk p { font-size: 16px; font-weight: 600; }
+.lk .arr { color: var(--fg3); font-size: 20px; line-height: 1; }
+.lk .cu p { color: var(--fg); }
+.lk .pb p { color: var(--fg2); }
+.go-cust { display: inline-block; margin-top: 28px; padding: 14px 22px; border-radius: 14px; background: var(--brand-tint); color: var(--brand); font-weight: 700; text-decoration: none; }
+.go-cust:hover { background: var(--brand); color: #fff; }
+
+/* 표 */
+.table .wrap { padding-block: 96px; }
+.tbl-wrap { margin-top: 48px; overflow-x: auto; }
+table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 16px; }
+th, td { text-align: left; padding: 18px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font-size: 14px; color: var(--fg3); font-weight: 700; }
+thead th:last-child { color: var(--brand); }
+tbody th { font-weight: 700; color: var(--fg2); width: 24%; }
+td.b { color: var(--fg3); }
+td.a { font-weight: 700; }
+
+/* 순환 */
+.how .wrap { padding-block: 96px; }
+.loop { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.st { background: var(--surface); border-radius: var(--r); padding: 24px; min-width: 0; }
+.st .n { font-size: 14px; font-weight: 800; color: var(--brand); }
+.st h3 { font-size: 19px; font-weight: 800; margin-top: 10px; letter-spacing: -0.03em; }
+.st p { font-size: 14.5px; color: var(--fg2); margin-top: 8px; }
+.loop-cap { margin-top: 16px; text-align: center; color: var(--fg2); font-size: 15px; }
+
+.end .wrap { padding-block: 120px 96px; text-align: center; }
+.end h2 { font-size: clamp(34px, 6vw, 60px); }
+.end h2 em { font-style: normal; color: var(--brand); }
+.end p { margin-top: 18px; color: var(--fg2); }
+.start { margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.start-btn { display: inline-block; padding: 20px 40px; border-radius: 18px; background: var(--brand); color: #fff; font-size: 19px; font-weight: 800; text-decoration: none; box-shadow: 0 14px 30px -12px var(--brand); transition: transform .15s; }
+.start-btn:hover { transform: translateY(-2px); }
+.start-sub { font-size: 14px; color: var(--fg3); }
+.go-app { margin-left: 8px; padding: 7px 14px; border-radius: 10px; background: var(--brand); color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+@media (max-width: 520px) { .go-app { margin-left: 4px; padding: 6px 10px; font-size: 12px; } }
+.foot { border-top: 1px solid var(--line); }
+.foot .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--fg3); line-height: 1.7; }
+.foot b { color: var(--fg2); }
+
+@media (prefers-reduced-motion: reduce) { .task { animation: none; } }
+@media (max-width: 900px) {
+  .hero .wrap, .moment .wrap, .moment.flip .wrap { grid-template-columns: 1fr; gap: 40px; padding-block: 64px; }
+  .moment.flip .txt { order: 0; }
+  .days, .chain { grid-template-columns: 1fr; }
+  .loop { grid-template-columns: 1fr 1fr; }
+  .day .wrap, .link .wrap, .table .wrap, .how .wrap { padding-block: 72px; }
+}
+@media (max-width: 520px) {
+  body { font-size: 16px; }
+  .loop, .split, .rule { grid-template-columns: 1fr; }
+  .tl { padding: 20px; }
+  .tl li { grid-template-columns: 48px 1fr; }
+  .ed { display: none; }
+  .task { grid-template-columns: auto 1fr; }
+  .task .go { display: none; }
+}
+</style>
+
+<header class="top band">
+  <div class="wrap">
+    <div class="logo"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#D8201F"/><path d="M8.6 21.6 L13.4 16.4 L17.6 19.4 L23.2 11.2" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.6" cy="21.6" r="3.3" fill="#fff"/><circle cx="23.2" cy="11.2" r="3.6" fill="#fff"/><circle cx="23.2" cy="11.2" r="1.5" fill="#D8201F"/></svg>사이로그</div>
+    <nav class="ed" aria-label="소개 페이지"><a href="landing.html">고객 편</a><span>PB 편</span></nav>
+    <span class="demo">시연용 가상 화면</span>
+    <a class="go-app" href="app.html">서비스 이용하기</a>
+  </div>
+</header>
+
+<section class="hero band">
+  <div class="wrap">
+    <div>
+      <h1>계좌는 사이로그가 읽고,<br><em>PB는 고객을</em><br>만나요</h1>
+      <p class="lead">관리 고객 56명의 잔고, 체결, 만기, 세금 기준일을 매일 아침 다 볼 수는 없어요. 사이로그가 먼저 읽고 오늘 연락할 사람을 급한 순서로 정리해 드려요.</p>
+      <div class="persona"><span class="av">조</span><span><b>조은식 PB</b> · 서울WM센터 · 가상 업무 화면</span></div>
+    </div>
+    <div class="win" aria-label="사이로그 오늘 할 일 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 오늘 할 일</span></div>
+      <div class="win-body">
+        <div class="greet"><b>좋은 아침이에요, 조은식 PB님</b><span>오늘 연락이 필요한 고객 33명이 있어요. 급한 순서로 정리했어요.</span></div>
+        <div class="prog"><div><i></i></div>9 / 33</div>
+        <div class="tasks">
+          <div class="task"><span class="pri p3">긴급</span><div><b>류승민</b><small>미수 변제 마감 290만원 · 오늘 15:30</small></div><span class="go">전화</span></div>
+          <div class="task"><span class="pri p3">긴급</span><div><b>정하윤</b><small>대주주 기준 초과 · 기준일 12월 30일</small></div><span class="go">전화</span></div>
+          <div class="task"><span class="pri p2">높음</span><div><b>이도윤</b><small>ELB 3,000만원 만기 D-7</small></div><span class="go">알림톡</span></div>
+          <div class="task"><span class="pri p2">높음</span><div><b>김서연</b><small>예수금 4,800만원 62일째 쉬는 중</small></div><span class="go">알림톡</span></div>
+          <div class="task"><span class="pri p1">보통</span><div><b>서민재</b><small>연금저축 세액공제 한도 300만원 남음</small></div><span class="go">알림톡</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="day band alt">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">조은식 PB의 하루</div>
+      <h2>같은 하루, 시간을 쓰는 곳이 달라져요</h2>
+      <p>찾고, 계산하고, 옮겨 적던 시간이 줄어들고 그만큼 고객과 이야기하는 시간이 늘어요.</p>
+    </div>
+    <div class="days">
+      <div class="tl b">
+        <div class="lb">사이로그 전 <span class="chip">찾고 옮겨 적는 하루</span></div>
+        <ol>
+          <li><time>08:30</time><span>여러 화면을 오가며 고객 잔고와 만기를 하나씩 확인</span></li>
+          <li><time>10:00</time><span>누구에게 먼저 전화할지 기억과 감으로 정하기</span></li>
+          <li><time>14:00</time><span>통화가 끝나면 메모를 정리하고 약속은 수첩에 적기</span></li>
+          <li><time>16:00</time><span>상품 목록을 뒤지며 고객 성향과 하나씩 맞춰 보기</span></li>
+          <li><time>17:30</time><span>안내 문자를 고객마다 금액을 계산해 따로 작성</span></li>
+        </ol>
+      </div>
+      <div class="tl a">
+        <div class="lb">사이로그 후 <span class="chip">사람에게 집중하는 하루</span></div>
+        <ol>
+          <li><time>08:30</time><span>오늘 할 일이 급한 순서로 정리되어 있어요</span></li>
+          <li><time>09:00</time><span>알림톡은 템플릿을 고르면 고객별 숫자가 채워져요</span></li>
+          <li><time>14:00</time><span>통화가 끝나면 요약과 일정 등록까지 끝나 있어요</span></li>
+          <li><time>16:00</time><span>고객에게 맞는 상품 후보 5개를 근거와 함께 받아요</span></li>
+          <li><time>17:30</time><span>완료한 일을 체크하고 내일 할 일을 확인해요</span></li>
+        </ol>
+      </div>
+    </div>
+    <p class="foot-note">시간대는 이해를 돕기 위한 예시입니다.</p>
+  </div>
+</section>
+
+<section class="moment band" id="todo">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">계좌 점검</div>
+      <h2>56개 계좌,<br>하나씩 안 열어봐도 돼요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>매일 아침 고객 계좌를 하나씩 열어 잔고, 체결, 만기를 확인했어요. 바쁜 날엔 다 못 보고 넘어가기도 했어요.</p></div>
+        <div class="a"><span>후</span><p>사이로그가 56개 계좌를 먼저 다 읽고, 오늘 챙길 일이 있는 계좌만 이유와 함께 남겨요. PB는 정리된 목록에서 하루를 시작해요.</p></div>
+      </div>
+      <div class="calc">
+        <div><small>하나씩 열어볼 때</small><b>56개 × 3분</b><span>약 2시간 48분</span></div>
+        <div class="on"><small>사이로그와 함께</small><b>목록 1개</b><span>급한 5명부터 바로 연락</span></div>
+      </div>
+      <p class="note">계좌 하나 확인에 3분이 걸린다고 가정한 예시입니다. 기한이 걸린 일(만기·미수·담보비율·대주주 기준일)이 긴급, 큰 비중 종목 급락은 높음으로 올라와요.</p>
+    </div>
+    <div class="win" aria-label="계좌 56개 점검 결과">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 오늘 아침 계좌 점검</span></div>
+      <div class="win-body">
+        <div class="scan-h"><b>56개 계좌를 읽었어요</b><small>오전 7:00 · 원장·체결·입출금·시세·만기·세금 기준일</small></div>
+        <div class="tiles" id="tiles" aria-hidden="true"></div>
+        <div class="legend">
+          <span><i class="t3"></i>바로 연락 <b>5</b></span>
+          <span><i class="t2"></i>오늘 안에 <b>10</b></span>
+          <span><i class="t1"></i>챙기면 좋은 일 <b>18</b></span>
+          <span><i class="t0"></i>할 일 없음 <b>23</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band alt flip" id="memory">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">고객 분석</div>
+      <h2>고객이 말하기 전에<br>먼저 알고 있어요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>상담 전에 지난 메모를 뒤지거나 기억에 기댔어요. 맞는 제안은 고객이 먼저 물어봐야 시작됐어요.</p></div>
+        <div class="a"><span>후</span><p>지난 통화와 방문에서 나눈 이야기, 거래 기록에서 읽은 관심사, 돈이 필요한 시기를 한 화면에 모아 기억해요.</p></div>
+        <div class="a"><span>후</span><p>그래서 이 고객에게 먼저 꺼낼 이야기와 상품 후보를 근거와 함께 정리해 둬요. PB가 먼저 제안해요.</p></div>
+      </div>
+    </div>
+    <div class="win" aria-label="고객 분석 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 고객 상세</span></div>
+      <div class="win-body">
+        <div class="who-h"><span class="av">도</span><div><b>이도윤</b><small>안정추구형 · 거래 4년차 · 마지막 연락 14일 전</small></div></div>
+        <div class="blk"><div class="mini-h"><span>함께 나눈 이야기</span><span>통화 요약에서</span></div>
+          <div class="mem">
+            <div><time>10.15</time><span>자녀 대학 등록금이 <b>2027년 2월</b>에 필요해요</span></div>
+            <div><time>08.27</time><span><b>배당이 나오는 상품</b>에 관심 있어요</span></div>
+            <div><time>06.10</time><span>원금 손실은 <b>최대한 피하고</b> 싶어요</span></div>
+          </div></div>
+        <div class="blk"><div class="mini-h"><span>거래 기록에서 읽은 관심사</span></div>
+          <div class="chips"><span>배당</span><span>채권</span><span>국내 대형주 78%</span><span>해외 비중 낮음</span></div></div>
+        <div class="blk"><div class="mini-h"><span>먼저 제안할 것</span></div>
+          <div class="sug">
+            <div><i>1</i><span><b>ELB 만기금 3,000만원 운용 상담</b><small>만기 D-7 · 등록금 일정 → 단기 채권형 후보 검토</small></span></div>
+            <div><i>2</i><span><b>연금저축 추가 납입 안내</b><small>세액공제 한도 300만원 남음</small></span></div>
+            <div><i>3</i><span><b>채권·배당 세미나 전화로 초대</b><small>11월 14일 · 배당·채권 관심과 맞음</small></span></div>
+          </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band" id="match">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">상품 후보</div>
+      <h2>왜 이 고객에게 맞는지<br>근거부터 보여줘요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>판매 상품 목록을 뒤지며 고객 성향과 보유 자산을 머릿속으로 맞춰 봤어요.</p></div>
+        <div class="a"><span>후</span><p>고객 분석 결과로 후보를 골라요. 투자성향으로 가입할 수 없는 등급은 먼저 빼고, 관심 분야·보유 자산 보완·성향·자금 필요·비용을 점수로 매겨 후보 5개를 보여줘요.</p></div>
+      </div>
+      <p class="note">후보는 PB가 검토하는 자료이며, 고객에게 안내하기 전에 적합성 확인과 설명 절차를 거칩니다.</p>
+    </div>
+    <div class="win" aria-label="AI 펀드 매칭 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · AI 펀드 매칭</span></div>
+      <div class="win-body">
+        <div class="meta"><span>이도윤 · <b>안정추구형</b> → 가입 가능 <b>4등급 이하</b></span><span>시연용 가상 펀드</span></div>
+        <div class="wts" aria-hidden="true"><i style="flex:35"></i><i style="flex:25"></i><i style="flex:15"></i><i style="flex:15"></i><i style="flex:10"></i></div>
+        <div class="wts-cap"><span>관심 35</span><span>보완 25</span><span>성향 15</span><span>필요 15</span><span>비용 10</span></div>
+        <div class="fd"><span class="rk">1</span><div><b>가상 단기채권 펀드 A</b><small>채권형 · 5등급</small><div class="why"><span>등록금 일정과 기간이 맞음</span><span>국내 주식 쏠림 보완</span></div></div><div class="m">92%<small>적합도</small></div></div>
+        <div class="fd"><span class="rk">2</span><div><b>가상 배당인컴 펀드 B</b><small>혼합형 · 4등급</small><div class="why"><span>배당 관심</span><span>낮은 총보수</span></div></div><div class="m">87%<small>적합도</small></div></div>
+        <div class="fd"><span class="rk">3</span><div><b>가상 채권혼합 펀드 C</b><small>채권혼합형 · 4등급</small><div class="why"><span>원금 중시 성향</span><span>연금 계좌 가능</span></div></div><div class="m">81%<small>적합도</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band alt flip" id="call">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">통화</div>
+      <h2>통화가 끝나면<br>정리도 끝나 있어요</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>통화 후 메모를 정리하고 약속은 수첩에 적었어요. 바쁜 날엔 약속이 잊히기도 했어요. 준법 점검은 한참 뒤에야 했고요.</p></div>
+        <div class="a"><span>후</span><p>통화 내용이 요약되고, 말 속의 날짜가 일정으로 등록돼요. 고객에게 가는 전날 알림도 함께 예약돼요.</p></div>
+        <div class="a"><span>후</span><p>"확실히 오릅니다" 같은 표현은 통화 중에 바로 알려줘서 그 자리에서 고쳐 말할 수 있어요.</p></div>
+      </div>
+    </div>
+    <div class="win" aria-label="통화 요약 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 통화 요약</span></div>
+      <div class="win-body">
+        <div class="sum-h"><b>이도윤 님 통화</b><small>10월 15일 14:02 · 12분</small></div>
+        <div class="blk"><div class="mini-h"><span>요약</span></div>
+          <ul><li>자녀 대학 등록금이 2027년 2월에 필요</li><li>원금을 지키는 운용을 원함</li><li>ELB 3,000만원 11월 5일 만기, 그 전에 다시 연락하기로 함</li></ul></div>
+        <div class="blk"><div class="mini-h"><span>찾은 일정</span></div>
+          <div class="ev"><i>✓</i><div><b>11월 3일 (화) 오후 2:00 · 만기금 운용 상담</b><small>내 일정에 등록됨 · 고객 전날 알림 예약됨</small></div></div></div>
+        <div class="blk"><div class="mini-h"><span>표현 점검</span></div>
+          <div class="cp"><b>1건 감지</b> · <s>"이건 확실히 오릅니다"</s> → "과거 수익률은 미래를 보장하지 않습니다"</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moment band" id="major">
+  <div class="wrap">
+    <div class="txt">
+      <div class="eb">세금 기준일</div>
+      <h2>연말 기준일을<br>놓치지 않게</h2>
+      <div class="pair">
+        <div class="b"><span>전</span><p>연말이 되면 고객별 종목 보유액을 하나씩 계산해서 대주주 기준을 확인했어요.</p></div>
+        <div class="a"><span>후</span><p>한 종목 보유액이 기준에 다가가면 오늘 할 일에 자동으로 올라와요. 기준일이 가까워질수록 우선순위가 올라가요.</p></div>
+      </div>
+      <p class="note">기준 금액과 날짜는 시연용 설정이며 실제 세법은 세무 상담으로 확인합니다.</p>
+    </div>
+    <div class="win" aria-label="대주주 양도세 감지 화면">
+      <div class="win-bar"><i></i><i></i><i></i><span>사이로그 · 대주주 양도세</span></div>
+      <div class="win-body">
+        <div class="rule"><div><small>종목당 기준</small><b>50억원</b></div><div><small>기준일</small><b>12월 30일</b></div><div><small>마지막 거래일</small><b>12월 28일</b></div></div>
+        <div class="mj">
+          <div><div><b>정하윤</b><small>한 종목 52억원 · 기준 초과</small></div><span class="pri p3">긴급</span><div class="gauge over" aria-hidden="true"><i style="width:83%"></i></div></div>
+          <div><div><b>오세진</b><small>한 종목 46억원 · 기준까지 4억원</small></div><span class="pri p2">높음</span><div class="gauge" aria-hidden="true"><i style="width:74%"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="link band alt">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">PB와 고객이 이어져요</div>
+      <h2>PB가 하는 한 번이<br>고객에게는 경험이 돼요</h2>
+    </div>
+    <div class="chain">
+      <div class="lk"><div class="pb"><div class="who">PB</div><p>알림톡 템플릿을 고르고 발송</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>내 계좌 숫자가 담긴 안내를 기한 전에 받아요</p></div></div>
+      <div class="lk"><div class="pb"><div class="who">PB</div><p>통화를 마치면 요약과 일정이 자동 등록</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>상담 전날 알림을 받고, 같은 설명을 다시 안 해요</p></div></div>
+      <div class="lk"><div class="pb"><div class="who">PB</div><p>근거가 붙은 상품 후보를 검토</p></div><div class="arr">↓</div><div class="cu"><div class="who">고객</div><p>왜 나에게 맞는지부터 설명을 들어요</p></div></div>
+    </div>
+    <div style="text-align:center"><a class="go-cust" href="landing.html">고객 편에서 보기 →</a></div>
+  </div>
+</section>
+
+<section class="table band">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="eb">한눈에 보기</div>
+      <h2>PB의 일은 이렇게 달라져요</h2>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>사이로그 전</th><th>사이로그 후</th></tr></thead>
+        <tbody>
+          <tr><th>계좌 점검</th><td class="b">56개 계좌를 하나씩 열어 확인</td><td class="a">할 일이 있는 계좌만 이유와 함께</td></tr>
+          <tr><th>연락 순서</th><td class="b">기억과 감</td><td class="a">기한과 손실 위험 기준</td></tr>
+          <tr><th>고객 기억</th><td class="b">메모를 뒤지거나 기억에 의존</td><td class="a">지난 대화·관심사·자금 일정이 한 화면에</td></tr>
+          <tr><th>제안 시점</th><td class="b">고객이 먼저 물어볼 때</td><td class="a">근거를 갖고 PB가 먼저</td></tr>
+          <tr><th>안내 메시지</th><td class="b">고객마다 계산해서 따로 작성</td><td class="a">템플릿에 고객 숫자 자동 채움</td></tr>
+          <tr><th>통화 기록</th><td class="b">메모 정리, 약속은 수첩</td><td class="a">요약·일정·고객 알림까지 자동</td></tr>
+          <tr><th>상품 후보</th><td class="b">목록을 뒤지며 수작업 대조</td><td class="a">성향 필터 후 근거 있는 5개</td></tr>
+          <tr><th>준법 점검</th><td class="b">통화 후 사후 점검</td><td class="a">통화 중 실시간 알림</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="end band alt">
+  <div class="wrap">
+    <h2>찾는 일은 사이로그가,<br><em>만나는 일은 PB가.</em></h2>
+    <p>유진투자증권 PB와 고객을 잇는 계좌 로그 서비스</p>
+    <div class="start">
+      <a class="start-btn" href="app.html">서비스 이용하기 →</a>
+      <a class="start-sub" href="landing.html">고객 편 다시 보기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot band">
+  <div class="wrap">
+    <b>시연용 가상 화면입니다.</b> 조은식 PB와 화면 속 고객, 금액, 펀드, 통화 내용은 모두 시연을 위해 만든 가상 값입니다. 펀드 이름과 적합도는 가상이며 특정 상품의 매매를 권유하지 않고 수익을 보장하지 않습니다. 세율·기준 금액·금리는 시연용 가정으로 실제와 다를 수 있습니다.
+  </div>
+</footer>
+
+<script>
+/* 다른 페이지(고객 편)에서 넘어오면 이전 스크롤 위치가 이어지지 않고 맨 위에서 시작 (#섹션 바로가기는 예외) */
+(() => {
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  const top = () => { if (!location.hash) window.scrollTo(0, 0); };
+  top(); addEventListener('load', () => { top(); setTimeout(top, 60); });
+})();
+</script>
+<script>
+/* 계좌 점검 타일 56개: 바로 연락 5 · 오늘 안에 10 · 챙기면 좋은 일 18 · 할 일 없음 23 (고정 배치) */
+(() => {
+  const el = document.getElementById('tiles'); if (!el) return;
+  const lv = [...Array(5).fill(3), ...Array(10).fill(2), ...Array(18).fill(1), ...Array(23).fill(0)];
+  let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  for (let i = lv.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [lv[i], lv[j]] = [lv[j], lv[i]]; }
+  el.innerHTML = lv.map(v => `<i class="t${v}">${v === 3 ? '!' : ''}</i>`).join('');
+})();
+</script>
