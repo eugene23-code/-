@@ -6,7 +6,7 @@
 <title>사이로그 PB</title>
 <!-- 소개 페이지(landing·pb)의 '서비스 이용하기' 링크 대상.
      로컬: index.html 로 바로 넘김 · 통합 Artifact 게시본: 이 경로에 index.html 내용이 그대로 올라감 -->
-<script>location.replace('index.html' + location.hash);</script>
+<script>try { sessionStorage.setItem('sailog.entered', '1'); } catch (e) {} location.replace('index.html' + location.hash);</script>
 </head>
 <body><a href="index.html">사이로그 PB 화면으로 이동</a></body>
 </html>
