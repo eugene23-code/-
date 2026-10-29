@@ -67,7 +67,7 @@ window.SAILOG_LIVE = (() => {
 
   function build() {
     document.body.insertAdjacentHTML('beforeend', `<aside class="lv" id="lv" hidden aria-label="고객 폰 (시연용 가상)">
-      <div class="lv-head"><b>고객 폰</b><span class="lv-who" id="lv-who">대기 중</span><button type="button" class="lv-x" id="lv-x" aria-label="시연 모드 끄기">×</button></div>
+      <div class="lv-head"><b>고객 폰 <small style="font-weight:600;color:var(--fg3);font-size:11.5px">· 고객이 보는 화면</small></b><span class="lv-who" id="lv-who">대기 중</span><button type="button" class="lv-x" id="lv-x" aria-label="시연 모드 끄기">×</button></div>
       <iframe class="lv-frame" title="고객 폰 (시연용 가상)"></iframe>
       <div class="lv-log"><div class="lv-log-h"><span>PB ↔ 고객 연결 기록</span><span>시연용</span></div>
         <ol id="lv-log"><li class="empty">알림톡 화면에서 고객을 골라 발송해 보세요. 고객 폰에 바로 도착해요.</li></ol></div>

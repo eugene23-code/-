@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>사이로그 PB</title>
+<title>사이로그 PB · 직원 전용</title>
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="stylesheet" href="fonts.css"> <!-- Pretendard: 프로젝트 내 글꼴 파일 (fonts/) -->
 <link rel="stylesheet" href="styles.css">
@@ -18,6 +18,14 @@
 .logo-mark { width: 32px; height: 32px; flex: none; display: block; }   /* logo.svg: PB·고객 사이를 잇는 로그 */
 .logo-text { font-weight: 800; font-size: 18px; letter-spacing: -0.03em; line-height: 1.1; }
 .logo-text small { display: block; font-size: 11px; font-weight: 500; color: var(--fg3); letter-spacing: 0; }
+/* 직원 전용 표시: 고객이 보는 화면(알림톡·고객 폰)과 구분 */
+.staff-tag { display: inline-block; vertical-align: 3px; margin-left: 6px; padding: 2px 7px; border-radius: 6px; background: var(--fg); color: var(--surface); font-size: 10.5px; font-weight: 700; letter-spacing: 0; }
+.staff-badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 99px; background: var(--fg); color: var(--surface); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.staff-badge svg { flex: none; }
+/* 시연 모드(고객 폰 패널 380px)로 본문이 좁아지면: 날짜 숨김 + 상단 바 줄바꿈 허용 */
+.topbar { flex-wrap: wrap; row-gap: 8px; }
+.topbar .search { flex: 0 1 220px; min-width: 150px; }
+@media (max-width: 1500px) { body.live .topbar .date { display: none; } }
 .nav-item {
   display: flex; align-items: center; gap: 10px; height: 42px; padding: 0 12px; border-radius: 12px;
   font-weight: 600; font-size: 14px; color: var(--fg2); width: 100%; text-align: left;
@@ -261,6 +269,7 @@ td.r, th.r { text-align: right; }
 .dt-head .d-name { font-size: 22px; }
 .dt-head .d-meta { font-size: 13px; margin-top: 2px; }
 .dt-head .acts { margin-left: auto; display: flex; gap: 8px; }
+.dt-head > div:not(.acts):not(.avatar) { flex: 1 1 0; min-width: 220px; }
 .dt-intro { margin: -4px 0 16px; padding-left: 14px; border-left: 3px solid var(--brand); }
 .dt-intro p { font-size: 17px; font-weight: 500; line-height: 1.5; letter-spacing: -.02em; color: var(--fg); text-wrap: pretty; }
 .dt-intro p b { font-weight: 700; }
@@ -532,7 +541,7 @@ td.r, th.r { text-align: right; }
 <body>
 <div class="app">
   <nav class="nav">
-    <div class="logo"><img class="logo-mark" src="logo.svg" alt=""><div class="logo-text">사이로그<small>유진투자증권 PB 워크스페이스</small></div></div>
+    <div class="logo"><img class="logo-mark" src="logo.svg" alt=""><div class="logo-text">사이로그<span class="staff-tag">직원용</span><small>유진투자증권 PB 업무 화면</small></div></div>
     <button class="nav-item active" data-view="todo"><span class="ico">☑</span>오늘 할 일<span class="badge" id="badge-todo">0</span></button>
     <button class="nav-item" data-view="customers"><span class="ico">👥</span>고객</button>
     <button class="nav-item" data-view="send"><span class="ico">💬</span>알림톡</button>
@@ -550,6 +559,7 @@ td.r, th.r { text-align: right; }
       <span class="spacer"></span>
       <button type="button" class="top-tab" id="tab-intro" data-intro>서비스 소개</button>
       <label class="search"><span>⌕</span><input id="q" type="search" placeholder="고객 이름 검색" autocomplete="off"></label>
+      <span class="staff-badge" title="이 화면은 PB(직원)만 사용합니다. 고객에게는 알림톡과 고객 폰 화면만 보입니다."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>직원 전용 · PB 업무 화면</span>
       <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
     </header>
 
@@ -898,7 +908,7 @@ td.r, th.r { text-align: right; }
 
     $('#dt-head').innerHTML = `<button class="back" id="dt-back" aria-label="뒤로">‹</button><div class="avatar lg">${c.initial}</div>
       <div><div class="d-name">${esc(c.name)}</div><div class="d-meta">${c.age}세 · ${c.risk} · ${c.phone} · 마지막 연락 ${sinceLabel(c.last)}</div></div>
-      <div class="acts"><button class="btn dark" id="dt-call">📞 전화</button><button class="btn" id="dt-send" ${sendable ? '' : 'disabled style="opacity:.5"'}>💬 알림톡</button></div>`;
+      <div class="acts"><button class="btn dark" id="dt-call">📞 전화</button><button class="btn" id="dt-send" ${sendable ? '' : 'disabled style="opacity:.5"'}>💬 알림톡</button>${window.SAILOG_FUND && SAILOG_FUND.topBtn ? SAILOG_FUND.topBtn(c) : ''}</div>`;
     $('#dt-back').onclick = () => show(state.prev || 'customers');
     $('#dt-call').onclick = () => startCall(id);
     if (sendable) $('#dt-send').onclick = () => openSendModal(id);

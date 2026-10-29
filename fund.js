@@ -170,6 +170,10 @@ window.SAILOG_FUND = (() => {
   .fd-bar { width: 84px; height: 5px; border-radius: 3px; background: var(--surface2); overflow: hidden; }
   .fd-bar i { display: block; height: 100%; background: var(--brand); border-radius: 3px; }
   .fd-note { font-size: 11.5px; color: var(--fg3); line-height: 1.5; margin-top: 12px; }
+  .fd-top-btn { color: var(--brand); border: 1px solid var(--brand); background: var(--brand-tint); font-weight: 700; }
+  .fd-top-btn.new { background: var(--brand); color: #fff; }
+  .fd-top-btn small { font-size: 11.5px; font-weight: 600; opacity: .75; margin-left: 2px; }
+  .fd-top-btn small.warn { color: var(--amber); opacity: 1; }
   @keyframes fd-in { to { opacity: 1; transform: none; } }
 
   .fd-ov { position: fixed; inset: 0; z-index: 200; background: rgba(15, 15, 20, .45); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; animation: fd-fade .2s ease; }
@@ -315,9 +319,19 @@ window.SAILOG_FUND = (() => {
       <p class="fd-note">시연용 가상 펀드·가상 수익률입니다. 투자성향과 계좌 데이터로 고른 PB 참고 자료이며 특정 상품의 매수를 권유하는 내용이 아닙니다. 펀드 안내는 카카오 메시지로 필수 고지와 함께 보내요. 실제 가입 전에는 적합성 확인과 투자설명서 설명 절차를 거칩니다.</p></div>`;
   }
 
+  /* 상세 헤더(전화 · 알림톡 옆) 버튼: 분석 전이면 바로 분석, 분석 기록이 있으면 아래 결과 카드로 이동 */
+  function topBtn(c) {
+    ensureCSS(); seed(c);
+    const rec = loadRec(c.id); const L = rec && rec.latest;
+    if (!L) return `<button class="btn fd-top-btn new" type="button" id="fd-top-${c.id}" data-fd-run="${c.id}" title="이 고객에게 맞는 공모펀드 상위 5개를 찾아요">✦ AI 펀드 추천</button>`;
+    const d = daysSince(L.at); const stale = L.risk !== c.risk || d > 30;
+    return `<button class="btn fd-top-btn" type="button" id="fd-top-${c.id}" data-fd-go="${c.id}" title="${fmtMD(L.at)} 분석 결과 보기">✦ AI 펀드 추천 <small class="${stale ? 'warn' : ''}">${stale ? '재분석 필요' : d <= 0 ? '오늘' : d + '일 전'}</small></button>`;
+  }
+
   function rerender(id) {
     const c = SAILOG.byId(id); const el = document.getElementById('fd-block-' + id); if (!c || !el) return;
     el.outerHTML = html(c);
+    const top = document.getElementById('fd-top-' + id); if (top) top.outerHTML = topBtn(c);
   }
 
   /* 분석중 팝업: 단계별 진행 후 결과 저장·표시 */
@@ -355,8 +369,9 @@ window.SAILOG_FUND = (() => {
 
   document.addEventListener('click', (e) => {
     const r = e.target.closest('[data-fd-run]'); if (r) { run(Number(r.dataset.fdRun)); return; }
+    const g = e.target.closest('[data-fd-go]'); if (g) { const el = document.getElementById('fd-block-' + g.dataset.fdGo); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const s = e.target.closest('[data-fd-send]'); if (s) openSend(Number(s.dataset.fdCust), s.dataset.fdSend);
   });
 
-  return { html, run, analyze, rerender, openSend, sentLog, FUNDS, GRADE, byId, latest: (id) => { const r = loadRec(id); return r && r.latest; } };
+  return { html, topBtn, run, analyze, rerender, openSend, sentLog, FUNDS, GRADE, byId, latest: (id) => { const r = loadRec(id); return r && r.latest; } };
 })();
