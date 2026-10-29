@@ -187,6 +187,9 @@ td.r, th.r { text-align: right; }
   display: flex; flex-direction: column;
 }
 .drawer.open { transform: translateX(0); }
+/* 시연 모드: 고객 드로어가 열려 있는 동안 고객 폰 패널은 숨기고 드로어를 화면 오른쪽 끝에 (닫히면 다시 보임) */
+body.live.dw .lv { visibility: hidden; }
+body.live.dw .drawer { right: 0; }
 .drawer-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line); }
 .drawer-head .x { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); font-size: 18px; }
 .drawer-head .d-id { min-width: 0; line-height: 1.45; }
@@ -845,11 +848,15 @@ td.r, th.r { text-align: right; }
     if (sendable) $('#d-send').onclick = () => openSendModal(id);
     $('#d-done').onclick = () => { closeDrawer(); complete(id, document.querySelector(`.task[data-id="${id}"]`)); };
     document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => UI.copy(b.dataset.copy));
+    clearTimeout(state.dwTimer); document.body.classList.add('dw');
     $('#drawer').classList.add('open');
     if (!soft || window.innerWidth <= 1100) $('#scrim').classList.add('on');
     $('#drawer-body').scrollTop = 0;
   }
-  function closeDrawer() { $('#drawer').classList.remove('open'); $('#scrim').classList.remove('on'); state.selected = null; document.querySelectorAll('.task').forEach(el => el.classList.remove('selected')); }
+  function closeDrawer() {
+    $('#drawer').classList.remove('open'); $('#scrim').classList.remove('on'); state.selected = null;
+    // 닫히는 애니메이션(0.3초)이 끝난 뒤 고객 폰을 다시 보이게
+    clearTimeout(state.dwTimer); state.dwTimer = setTimeout(() => { if (!$('#drawer').classList.contains('open')) document.body.classList.remove('dw'); }, 320); document.querySelectorAll('.task').forEach(el => el.classList.remove('selected')); }
   $('#scrim').onclick = () => { closeDrawer(); closeModal(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeModal(); } });
 
@@ -1148,6 +1155,8 @@ td.r, th.r { text-align: right; }
   /* ---------- 알림톡 발송 모달 (고객 1명) ---------- */
   function openSendModal(id, tplKey) {
     const c = byId(id);
+    // 시연 모드: 발송 후 고객 폰에 도착하는 장면이 보이도록 드로어를 닫아 둔다
+    if (document.body.classList.contains('live') && $('#drawer').classList.contains('open')) closeDrawer();
     const options = [...new Set(c.signals.filter(s => s.template).map(s => s.template))];
     let tpl = tplKey && options.includes(tplKey) ? tplKey : options[0];
     const render = () => {
