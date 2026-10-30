@@ -19,9 +19,12 @@
 .logo-text { font-weight: 800; font-size: 18px; letter-spacing: -0.03em; line-height: 1.1; }
 .logo-text small { display: block; font-size: 11px; font-weight: 500; color: var(--fg3); letter-spacing: 0; }
 /* 직원 전용 표시: 고객이 보는 화면(귀띔·고객 폰)과 구분 */
-.staff-tag { display: inline-block; vertical-align: 3px; margin-left: 6px; padding: 2px 7px; border-radius: 6px; background: var(--fg); color: var(--surface); font-size: 10.5px; font-weight: 700; letter-spacing: 0; }
-.staff-badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 99px; background: var(--fg); color: var(--surface); font-size: 12px; font-weight: 700; white-space: nowrap; }
-.staff-badge svg { flex: none; }
+.staff-tag { display: inline-block; vertical-align: 2px; margin-left: 6px; padding: 3px 8px; border-radius: 7px; background: var(--fg); color: var(--surface); font-size: 12px; font-weight: 800; letter-spacing: 0; }
+/* 상단 띠: 스크롤해도 상단 바와 함께 고정 */
+.staff-band { flex: 0 0 calc(100% + 56px); margin: -14px -28px 2px; display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 28px; background: var(--fg); color: var(--surface); font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
+.staff-band svg { flex: none; }
+.staff-band span { font-size: 12.5px; font-weight: 500; opacity: .72; }
+@media (max-width: 760px) { .staff-band { flex-basis: calc(100% + 32px); margin: -12px -16px 2px; padding: 8px 16px; flex-wrap: wrap; row-gap: 2px; } }
 /* 시연 모드(고객 폰 패널 380px)로 본문이 좁아지면: 날짜 숨김 + 상단 바 줄바꿈 허용 */
 .topbar { flex-wrap: wrap; row-gap: 8px; }
 .topbar .search { flex: 0 1 220px; min-width: 150px; }
@@ -120,6 +123,10 @@
 .task-talk .cp:hover { background: var(--surface); color: var(--fg); }
 @media (max-width: 640px) { .task-talk .tk-row { grid-template-columns: 1fr auto; } .task-talk .tk-l { grid-column: 1 / -1; } }
 .task-more { font-size: 12px; color: var(--fg3); margin-left: auto; align-self: center; }
+/* 완료 버튼: 왼쪽 동그라미와 같은 동작. 라벨이 있어 처음 보는 사람도 찾기 쉽게 */
+.btn.sm.done-btn { margin-left: auto; background: var(--green-tint); color: var(--green); font-weight: 700; }
+.btn.sm.done-btn:hover { background: var(--green); color: #fff; }
+.task-more ~ .done-btn { margin-left: 4px; }
 
 .done-box { margin-top: 26px; }
 .done-box summary { cursor: pointer; font-weight: 700; color: var(--fg2); font-size: 14px; list-style: none; display: flex; align-items: center; gap: 8px; }
@@ -558,11 +565,11 @@ body.live.dw .drawer { right: 0; }
 
   <div class="main">
     <header class="topbar">
+      <div class="staff-band" role="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>직원 전용 · PB 업무 화면<span>고객에게는 보이지 않아요. 고객은 귀띔 메시지와 고객 폰 화면만 받아요.</span></div>
       <h2 id="view-title">오늘 할 일</h2>
       <span class="date" id="today-label"></span>
       <span class="spacer"></span>
       <label class="search"><span>⌕</span><input id="q" type="search" placeholder="고객 이름 검색" autocomplete="off"></label>
-      <span class="staff-badge" title="이 화면은 PB(직원)만 사용합니다. 고객에게는 귀띔과 고객 폰 화면만 보입니다."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>직원 전용 · PB가 보는 화면</span>
       <span class="demo-badge">시연용 가상 화면 · 가상 고객</span>
     </header>
 
@@ -767,6 +774,7 @@ body.live.dw .drawer { right: 0; }
       el.classList.toggle('selected', state.selected === id);
       el.onclick = () => openDrawer(id);
       $('.check', el).onclick = (e) => { e.stopPropagation(); complete(id, el); };
+      $('[data-act="done"]', el).onclick = (e) => { e.stopPropagation(); complete(id, el); };
       $('.task-name b', el).onclick = (e) => { e.stopPropagation(); openDetail(id); };
       $('.task-name b', el).style.cursor = 'pointer';
       $('[data-act="script"]', el).onclick = (e) => { e.stopPropagation(); state.talk.has(id) ? state.talk.delete(id) : state.talk.add(id); renderTodo(); };
@@ -785,7 +793,7 @@ body.live.dw .drawer { right: 0; }
   function taskHTML(t) {
     const c = t.customer;
     return `<article class="task pri-${t.pri}" data-id="${t.id}">
-      <button class="check" aria-label="완료 처리">${CHECK_SVG}</button>
+      <button class="check" aria-label="완료 처리" title="완료 처리">${CHECK_SVG}</button>
       <div class="task-main">
         <div class="task-top"><span class="pill pri-${t.pri}">${PRI[t.pri]}</span>${[...new Set(t.signals.map(s => s.label))].map(l => `<span class="chip">${esc(l)}</span>`).join('')}${t.benefit ? `<span class="task-benefit">${esc(t.benefit)}</span>` : ''}</div>
         <div class="task-name"><b>${esc(c.name)}</b><span>${c.age}세 · ${c.risk} · 마지막 연락 ${sinceLabel(c.last)}</span></div>
@@ -795,6 +803,7 @@ body.live.dw .drawer { right: 0; }
           <button class="btn sm ${state.talk.has(t.id) ? '' : 'dark'}" data-act="script">${state.talk.has(t.id) ? '멘트 접기' : '🗒️ 연락 이유 · 멘트'}</button>
           ${t.signals.some(s => s.template) ? `<button class="btn sm" data-act="send">💬 귀띔</button>` : ''}
           ${t.signals.length > 1 ? `<span class="task-more">신호 ${t.signals.length}개 · 자세히</span>` : ''}
+          <button class="btn sm done-btn" data-act="done">✓ 완료</button>
         </div>
         ${state.talk.has(t.id) ? talkHTML(t) : ''}
       </div></article>`;

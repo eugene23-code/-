@@ -110,8 +110,8 @@ window.SAILOG_SHELL = (() => {
     return pre + html;
   }
 
-  // 셸 주소 #pb · #customer/call · #app/view=cx
-  const parse = () => { const h = location.hash.slice(1); const i = h.indexOf('/'); const name = i < 0 ? h : h.slice(0, i); return { name: NAMES.includes(name) ? name : 'landing', sub: i < 0 ? '' : h.slice(i + 1) }; };
+  // 셸 주소 #pb · #customer/call · #app/view=cx (해시 없으면 PB 워크스페이스)
+  const parse = () => { const h = location.hash.slice(1); const i = h.indexOf('/'); const name = i < 0 ? h : h.slice(0, i); return { name: NAMES.includes(name) ? name : 'app', sub: i < 0 ? '' : h.slice(i + 1) }; };
   function render() {
     const { name, sub } = parse();
     frame.srcdoc = build(name + '.html' + (sub ? '#' + sub : ''));

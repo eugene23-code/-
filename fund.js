@@ -109,7 +109,7 @@ window.SAILOG_FUND = (() => {
   /* ---------- 화면 ---------- */
   const CSS = `
   .fd-head-btn { margin-left: auto; }
-  [id^="fd-block-"] { scroll-margin-top: 84px; }
+  [id^="fd-block-"] { scroll-margin-top: 126px; }
   .fd-intro { display: flex; align-items: center; gap: 16px; padding: 18px; border-radius: 14px; background: var(--surface2); }
   .fd-intro .ic { flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--brand-tint); color: var(--brand); display: grid; place-items: center; font-size: 22px; }
   .fd-intro p { font-size: 13px; color: var(--fg2); line-height: 1.55; margin: 0; }
